@@ -1,3 +1,4 @@
+using Radzen;
 using WebStore.Components;
 
 namespace WebStore
@@ -12,7 +13,17 @@ namespace WebStore
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
 
-            var app = builder.Build();
+			// Register Radzen services
+			builder.Services.AddScoped<DialogService>();
+			builder.Services.AddScoped<NotificationService>();
+			builder.Services.AddScoped<TooltipService>();
+			builder.Services.AddScoped<ContextMenuService>();
+
+			// Register other services
+			builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://localhost:11825/") });
+			//builder.Services.AddScoped<>();
+
+			var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
