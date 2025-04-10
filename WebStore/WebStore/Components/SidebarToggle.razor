@@ -1,0 +1,30 @@
+﻿@rendermode InteractiveServer
+
+<div style="padding: 4px;">
+    <RadzenButton Icon="menu"
+                  class="rz-button-icon-only"
+                  ButtonStyle="ButtonStyle.Light"
+                  Click="@ToggleSidebar" />
+</div>
+<div class="@SidebarClass" 
+     style="position: absolute; top: 64px; height: calc(100% - 64px); z-index: 1000; transition: transform 0.3s ease, width 0.3s ease;">
+    <RadzenSidebar Style="width: 250px; height: 100%;">
+        <RadzenPanelMenu>
+            <RadzenPanelMenuItem Text="Home" Icon="home" Path="/" />
+            <RadzenPanelMenuItem Text="Campanhas" Icon="campaign" Path="/campanhas" />
+            <RadzenPanelMenuItem Text="Login" Icon="login" Path="/login" />
+
+        </RadzenPanelMenu>
+    </RadzenSidebar>
+</div>
+
+@code {
+    private bool sidebarVisible = false;
+
+    private string SidebarClass => sidebarVisible ? "slide-in" : "slide-out";
+
+    private void ToggleSidebar()
+    {
+        sidebarVisible = !sidebarVisible;
+    }
+}

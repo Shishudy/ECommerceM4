@@ -1,23 +1,27 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
+<div style="display: grid;
+            grid-template-rows: auto 1fr;
+            grid-template-columns: 250px 1fr;
+            grid-template-areas:
+                'header header'
+                'sidebar body';
+            height: 100vh;">
+
+    <div style="grid-area: header; background-color: #333; color: white; padding: 10px;">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+            <SidebarToggle />
+
+            <div style="flex: 1; display: flex; justify-content: center;">
+                <SearchBar />
+            </div>
+
+            <CartToggle />
+        </div>
     </div>
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
-
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
-
-<div id="blazor-error-ui">
-    An unhandled error has occurred.
-    <a href="" class="reload">Reload</a>
-    <a class="dismiss">🗙</a>
+  
+    <div style="grid-area: body; padding: 1rem; background-color: #f3f3f3;">
+        @Body
+    </div>
 </div>

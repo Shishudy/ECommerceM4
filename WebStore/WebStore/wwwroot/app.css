@@ -49,3 +49,17 @@ h1:focus {
 .darker-border-checkbox.form-check-input {
     border-color: #929292;
 }
+
+
+.slide-in {
+    transform: translateX(0%);
+    width: 250px;
+    overflow: visible;
+}
+
+.slide-out {
+    transform: translateX(-100%);
+    width: 0px;
+    overflow: hidden;
+}
+

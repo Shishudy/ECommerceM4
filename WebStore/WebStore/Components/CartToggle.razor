@@ -1,0 +1,27 @@
+﻿@rendermode InteractiveServer
+
+<div style="position: fixed; top: 10px; right: 10px; z-index: 1000;">
+    <RadzenButton Icon="shopping_cart"
+                  class="rz-button-icon-only"
+                  ButtonStyle="ButtonStyle.Light"
+                  Click="@ToggleCart" />
+</div>
+
+<div class="@CartClass"
+     style="position: fixed; top: 64px; right: 0; height: calc(100% - 64px); z-index: 1000; transition: transform 0.3s ease, width 0.3s ease;">
+    <div style="width: 300px; background-color: black; height: 100%; box-shadow: -4px 0 10px rgba(0,0,0,0.1); padding: 1rem;">
+        <h4>🛒 Carrinho</h4>
+        <p>Você ainda não adicionou itens.</p>
+    </div>
+</div>
+
+@code {
+    private bool cartVisible = false;
+
+    private string CartClass => cartVisible ? "slide-in" : "slide-out";
+
+    private void ToggleCart()
+    {
+        cartVisible = !cartVisible;
+    }
+}
