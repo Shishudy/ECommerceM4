@@ -5,5 +5,6 @@
   </PropertyGroup>
   <PropertyGroup>
     <ActiveDebugProfile>IIS Express</ActiveDebugProfile>
+    <NameOfLastUsedPublishProfile>C:\Users\rafae\Desktop\UpSkill\M4\Projeto\ECommerceM4\WebStore\WebStore\Properties\PublishProfiles\WebStoreUpSkill - Web Deploy.pubxml</NameOfLastUsedPublishProfile>
   </PropertyGroup>
 </Project>
