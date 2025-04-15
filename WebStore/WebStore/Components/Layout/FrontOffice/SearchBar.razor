@@ -1,0 +1,14 @@
+﻿@rendermode InteractiveServer
+
+<div id="search">
+    <form>
+        <input type="text"
+               placeholder="Pesquisar campanhas..."
+               @bind="SearchTerm"
+               @bind:event="oninput" />
+    </form>
+</div>
+
+@code {
+    private string SearchTerm = "";
+}

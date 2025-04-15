@@ -5,7 +5,7 @@
       {
         "Path": "WebStore\\WebStore.csproj",
         "Action": "Start",
-        "DebugTarget": "IIS Express"
+        "DebugTarget": "http"
       },
       {
         "Path": "StoreAPI\\StoreAPI.csproj",

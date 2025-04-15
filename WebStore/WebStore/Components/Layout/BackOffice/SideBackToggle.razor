@@ -1,0 +1,42 @@
+﻿@rendermode InteractiveServer
+@layout MainBackLayout
+
+<div style="padding: 4px;">
+    <RadzenButton Icon="menu"
+                  class="rz-button-icon-only"
+                  ButtonStyle="ButtonStyle.Light"
+                  Click="@ToggleSidebar" />
+</div>
+@if (sidebarVisible)
+{
+    <div @onclick=" CloseSidebar"
+         style="position: fixed; top: 64px; left: 0; width: 100%; height: calc(100% - 64px);
+                background-color: rgba(0,0,0,0.3); z-index: 1000;">
+    </div>
+}
+<div class="@SidebarClass"
+     style="position: absolute; top: 64px; height: calc(100% - 64px); z-index: 1000; transition: transform 0.3s ease, width 0.3s ease;">
+    <RadzenSidebar Style="width: 250px; height: 100%;">
+        <RadzenPanelMenu>
+            <RadzenPanelMenuItem Text="Home" Icon="home" Path="/admin" />
+            <RadzenPanelMenuItem Text="GerirContas" Icon="check_circle" Path="/gerircontas" />
+            <RadzenPanelMenuItem Text="AdicionarCampanhas" Icon="note_add" Path="/adicionarcampanhas" />
+            <RadzenPanelMenuItem Text="AdicionarProdutos" Icon="add_shopping_cart" Path="/adicionarprodutos" />
+        </RadzenPanelMenu>
+    </RadzenSidebar>
+</div>
+
+@code {
+    private bool sidebarVisible = false;
+
+    private string SidebarClass => sidebarVisible ? "slide-in" : "slide-out";
+
+    private void ToggleSidebar()
+    {
+        sidebarVisible = !sidebarVisible;
+    }
+    private void CloseSidebar()
+    {
+        sidebarVisible = false;
+    }
+}
