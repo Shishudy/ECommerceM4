@@ -1,4 +1,5 @@
 ﻿@rendermode InteractiveServer
+@layout MainLayout
 
 <div style="padding: 4px;">
     <RadzenButton Icon="menu"
@@ -6,6 +7,15 @@
                   ButtonStyle="ButtonStyle.Light"
                   Click="@ToggleSidebar" />
 </div>
+
+@if (sidebarVisible)
+{
+    <div @onclick=" CloseSidebar"
+         style="position: fixed; top: 64px; left: 0; width: 100%; height: calc(100% - 64px);
+                background-color: rgba(0,0,0,0.3); z-index: 1000;">
+    </div>
+}
+
 <div class="@SidebarClass" 
      style="position: absolute; top: 64px; height: calc(100% - 64px); z-index: 1000; transition: transform 0.3s ease, width 0.3s ease;">
     <RadzenSidebar Style="width: 250px; height: 100%;">
@@ -26,5 +36,10 @@
     private void ToggleSidebar()
     {
         sidebarVisible = !sidebarVisible;
+    }
+
+    private void CloseSidebar()
+    {
+        sidebarVisible = false;
     }
 }

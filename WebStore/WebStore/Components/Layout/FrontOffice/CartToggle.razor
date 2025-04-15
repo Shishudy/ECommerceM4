@@ -1,0 +1,59 @@
+﻿@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<!-- Botão fixo -->
+<div style="position: fixed; top: 10px; right: 10px; z-index: 1001;">
+    <RadzenButton Icon="shopping_cart"
+                  class="rz-button-icon-only"
+                  ButtonStyle="ButtonStyle.Light"
+                  Click="@ToggleCart" />
+</div>
+
+<!-- Overlay (clique fora para fechar) -->
+@if (cartVisible)
+{
+    <div @onclick="CloseCart"
+         style="position: fixed; top: 64px; left: 0; width: 100%; height: calc(100% - 64px);
+                background-color: rgba(0,0,0,0.3); z-index: 1000;">
+    </div>
+}
+
+<!-- Painel lateral do carrinho -->
+<div class="@CartClass"
+     style="position: fixed; top: 64px; right: 0; height: calc(100% - 64px); z-index: 1001;
+            transition: transform 0.3s ease, width 0.3s ease;">
+
+    <div style="width: 300px; height: 100%; background-color: black;
+                display: flex; flex-direction: column; justify-content: space-between; color: white;">
+        <div style="padding: 1rem; flex: 1;">
+            <h4 style="display: flex; align-items: center; gap: 8px;">
+                <i class="material-icons">shopping_cart</i> Carrinho
+            </h4>
+            <p style="margin-top: 10px;">Você ainda não adicionou itens.</p>
+        </div>
+
+        <div style="padding: 1rem;">
+            <RadzenButton Text="Finalizar Compra"
+                          Icon="check_circle"
+                          ButtonStyle="ButtonStyle.Danger"
+                          Style="width: auto; position:center"
+                          Click="@(() => NavigationManager.NavigateTo("/finalizarcompra"))" />
+        </div>
+    </div>
+</div>
+
+@code {
+    private bool cartVisible = false;
+
+    private string CartClass => cartVisible ? "slide-in" : "slide-out";
+
+    private void ToggleCart()
+    {
+        cartVisible = !cartVisible;
+    }
+
+    private void CloseCart()
+    {
+        cartVisible = false;
+    }
+}
