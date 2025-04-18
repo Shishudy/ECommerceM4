@@ -1,5 +1,67 @@
 ﻿@page "/login"
-<h1>Modal de login</h1>
-@code {
+@inject NavigationManager NavigationManager
+@inject AuthService AuthService
 
+@rendermode InteractiveServer
+
+<div class="login-modal">
+    <h2>Login</h2>
+
+    <RadzenTextBox @bind-Value="email"
+                   Placeholder="Email"
+                   class="login-input"
+                   Style="width: 100%;" />
+
+    <RadzenPassword @bind-Value="password"
+                    Placeholder="Passe"
+                    class="login-input"
+                    Style="width: 100%;" />
+
+    <RadzenButton Text="Entrar"
+                  Click="HandleLogin"
+                  Style="width: 100%; margin-top: 1rem;"
+                  ButtonStyle="ButtonStyle.Primary" />
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div style="color: red; margin-top: 1rem;">@errorMessage</div>
+    }
+
+    <div style="margin-top: 1.5rem;">
+        <span>Não tem conta?</span>
+        <a href="register" style="margin-left: 5px; color: #007bff; text-decoration: underline; cursor: pointer;">
+            Criar conta
+        </a>
+    </div>
+
+    <div class="social-login">
+        <button class="btn-google"><i class="fab fa-google"></i></button>
+        <button class="btn-facebook"><i class="fab fa-facebook-f"></i></button>
+        <button class="btn-x"><i class="fab fa-x-twitter"></i></button>
+        <button class="btn-microsoft"><i class="fab fa-microsoft"></i></button>
+    </div>
+</div>
+
+@code {
+    private string email;
+    private string password;
+    private string errorMessage;
+
+    private async Task HandleLogin()
+    {
+        var result = await AuthService.Login(new LoginModel
+            {
+                Email = email,
+                Password = password
+            });
+
+        if (result == "success")
+        {
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            errorMessage = "Email ou senha inválidos.";
+        }
+    }
 }

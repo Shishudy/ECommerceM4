@@ -1,6 +1,49 @@
 ﻿@page "/finalizarcompra"
-<h3>FinalizarCompra</h3>
+@rendermode InteractiveServer
+
+<h3 style="margin-bottom: 1rem;">Finalizar Compra</h3>
+
+<div class="checkout-form">
+
+    <div class="checkout-group">
+        <RadzenLabel Text="Cartão de crédito" />
+        <RadzenTextBox Placeholder="**** **** **** 1234" Style="width: 100%;" />
+
+        <RadzenLabel Text="Nome Associado" />
+        <RadzenTextBox Style="width: 100%;" />
+
+        <RadzenLabel Text="NIF" />
+        <RadzenTextBox Style="width: 100%;" />
+
+        <RadzenLabel Text="Nº de documento" />
+        <RadzenTextBox Style="width: 100%;" />
+    </div>
+
+    <div class="checkout-group">
+        <RadzenLabel Text="Morada" />
+        <RadzenTextBox Placeholder="Rua / porta / andar" Style="width: 100%;" />
+
+        <RadzenLabel Text="Código Postal" />
+        <RadzenTextBox Style="width: 100%;" />
+
+        <RadzenLabel Text="Andar / Lado" />
+        <RadzenTextBox Style="width: 100%;" />
+
+        <RadzenLabel Text="Informações Úteis" />
+        <RadzenTextBox Style="width: 100%;" />
+    </div>
+</div>
+
+<div class="checkout-footer">
+    <RadzenButton Text="Avançar"
+                  Icon="check"
+                  ButtonStyle="ButtonStyle.Primary"
+                  Click="@CompletarCompra" />
+</div>
 
 @code {
-
+    private void CompletarCompra()
+    {
+        Console.WriteLine("Compra finalizada!");
+    }
 }

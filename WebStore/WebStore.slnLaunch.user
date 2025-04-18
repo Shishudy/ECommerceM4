@@ -10,7 +10,7 @@
       {
         "Path": "StoreAPI\\StoreAPI.csproj",
         "Action": "Start",
-        "DebugTarget": "IIS Express"
+        "DebugTarget": "http"
       }
     ]
   }
