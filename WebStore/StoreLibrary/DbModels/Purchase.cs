@@ -1,0 +1,33 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace StoreLibrary.DbModels;
+
+public partial class Purchase
+{
+    public int PkPurchase { get; set; }
+
+    public int FkUser { get; set; }
+
+    public int? FkInvoice { get; set; }
+
+    public int? FkReview { get; set; }
+
+    public DateOnly? DatePurchase { get; set; }
+
+    public string Status { get; set; } = null!;
+
+    public int? FkAddressShipment { get; set; }
+
+    public virtual ICollection<CartHistory> CartHistories { get; set; } = new List<CartHistory>();
+
+    public virtual ICollection<Cart> Carts { get; set; } = new List<Cart>();
+
+    public virtual Address? FkAddressShipmentNavigation { get; set; }
+
+    public virtual Invoice? FkInvoiceNavigation { get; set; }
+
+    public virtual Review? FkReviewNavigation { get; set; }
+
+    public virtual ICollection<PurchaseProduct> PurchaseProducts { get; set; } = new List<PurchaseProduct>();
+}
