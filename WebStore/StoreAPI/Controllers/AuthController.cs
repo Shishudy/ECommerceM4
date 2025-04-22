@@ -24,28 +24,25 @@ namespace StoreAPI.Controllers
 			_config = config;
 		}
 
+
 		[HttpPost("register")]
 		public async Task<IActionResult> Register([FromBody] RegisterModel model)
 		{
-			if (model.Password != model.ConfirmPassword)
-				return BadRequest(new { message = "As palavras-passe não coincidem." });
-
 			var user = new IdentityUser { UserName = model.Email, Email = model.Email };
 			var result = await _userManager.CreateAsync(user, model.Password);
 
 			if (!result.Succeeded)
-			{
-				var errors = result.Errors.Select(e => e.Description).ToList();
-				return BadRequest(new { errors });
-			}
+				return BadRequest(result.Errors.Select(e => e.Description));
 
-			if (!await _roleManager.RoleExistsAsync("User"))
-				await _roleManager.CreateAsync(new IdentityRole("User"));
+			if (!await _roleManager.RoleExistsAsync(model.Role))
+				await _roleManager.CreateAsync(new IdentityRole(model.Role));
 
-			await _userManager.AddToRoleAsync(user, "User");
+			await _userManager.AddToRoleAsync(user, model.Role);
 
 			return Ok(new { message = "Utilizador registado com sucesso." });
 		}
+
+
 		[HttpPost("login")]
 		public async Task<IActionResult> Login([FromBody] LoginModel model)
 		{
@@ -54,14 +51,11 @@ namespace StoreAPI.Controllers
 				return Unauthorized("Credenciais inválidas.");
 
 			var roles = await _userManager.GetRolesAsync(user);
-			if (!roles.Contains("User"))
-				return Forbid("Apenas utilizadores com o role 'User' podem iniciar sessão.");
-
 			var claims = new List<Claim>
 	{
 		new Claim(ClaimTypes.Name, user.Email),
-		new Claim(ClaimTypes.Role, "User")
-	};
+		new Claim(ClaimTypes.Role, roles.First())
+    };
 
 			var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JwtSettings:SecretKey"]));
 			var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -71,12 +65,10 @@ namespace StoreAPI.Controllers
 				audience: _config["JwtSettings:Audience"],
 				claims: claims,
 				expires: DateTime.UtcNow.AddHours(2),
-				signingCredentials: creds
-			);
+				signingCredentials: creds);
 
 			var tokenStr = new JwtSecurityTokenHandler().WriteToken(token);
 			return Ok(tokenStr);
 		}
-
 	}
 }

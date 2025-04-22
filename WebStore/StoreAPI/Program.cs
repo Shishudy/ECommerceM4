@@ -34,6 +34,12 @@ namespace StoreAPI
 						  .AllowAnyHeader());
 			});
 
+			var storedbConnectionString = builder.Configuration.GetConnectionString("StoreDBConnection") ?? throw new InvalidOperationException("Connection string 'StoreDBConnection' not found.");
+
+			//Jwt
+
+
+
 			// JWT
 			var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 			var key = Encoding.ASCII.GetBytes(jwtSettings["SecretKey"]);

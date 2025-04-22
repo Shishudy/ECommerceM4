@@ -1,6 +1,7 @@
 ﻿using WebStore.Services.CostumeAuthStateProvider;
 using WebStore.Models.Auth;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
 namespace WebStore.Services.AuthService
 {
 	public class AuthService
@@ -33,13 +34,22 @@ namespace WebStore.Services.AuthService
 			var response = await _http.PostAsJsonAsync("api/auth/register", model);
 
 			if (response.IsSuccessStatusCode)
-				return "success";
+			{
 
-			var content = await response.Content.ReadFromJsonAsync<Dictionary<string, List<string>>>();
-			return content != null && content.ContainsKey("errors")
-				? content["errors"]
-				: new List<string> { "Erro desconhecido." };
+			}
+				return "success";
+			var content = await response.Content.ReadFromJsonAsync<List<IdentityError>>();
+
+			if (content != null)
+			{
+				var messages = content.Select(e => e.Description).ToList();
+				return messages;
+			}
+
+			return new List<string> { "Erro desconhecido." };
 		}
+
+
 
 		public async Task<AuthenticationState> GetAuthState()
 		{

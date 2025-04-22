@@ -8,32 +8,43 @@
 
 <PageTitle>Admin</PageTitle>
 
-<AuthorizeView Roles="Admin">
-    <Authorized>
-        <h3>Bem-vindo, administrador!</h3>
+@if (!_checkedAuth)
+{
+    <p>Verificando permissões...</p>
+}
+else if (_isAuthorized)
+{
+    <h3>Bem-vindo, administrador!</h3>
 
-        <RadzenButton Text="Logout"
-                      Click="Logout"
-                      Style="margin-top: 20px;"
-                      ButtonStyle="ButtonStyle.Danger" />
-    </Authorized>
-    <NotAuthorized>
-        <p>Acesso negado. Redirecionando...</p>
-    </NotAuthorized>
-</AuthorizeView>
+    <RadzenButton Text="Logout"
+                  Click="Logout"
+                  Style="margin-top: 20px;"
+                  ButtonStyle="ButtonStyle.Danger" />
+}
 
 @code {
     [CascadingParameter]
     private Task<AuthenticationState> AuthenticationStateTask { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        var authState = await AuthenticationStateTask;
-        var user = authState.User;
+    private bool _checkedAuth = false;
+    private bool _isAuthorized = false;
 
-        if (!user.Identity.IsAuthenticated || !user.IsInRole("Admin"))
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !_checkedAuth)
         {
-            NavigationManager.NavigateTo("/adminlogin", forceLoad: true);
+            var authState = await AuthenticationStateTask;
+            var user = authState.User;
+
+            _isAuthorized = user.Identity.IsAuthenticated && user.IsInRole("Admin");
+
+            if (!_isAuthorized)
+            {
+                NavigationManager.NavigateTo("/admindoor", forceLoad: true);
+            }
+
+            _checkedAuth = true;
+            StateHasChanged();
         }
     }
 
@@ -43,4 +54,3 @@
         NavigationManager.NavigateTo("/admindoor");
     }
 }
-
