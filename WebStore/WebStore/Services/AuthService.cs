@@ -22,12 +22,18 @@ namespace WebStore.Services.AuthService
 			if (response.IsSuccessStatusCode)
 			{
 				var token = await response.Content.ReadAsStringAsync();
-				_authProvider.SetToken(token);
+				await _authProvider.SetToken(token);
+
+				_authProvider.Notify();
+
 				return "success";
 			}
 
 			return "fail";
 		}
+
+
+
 
 		public async Task<object> Register(RegisterModel model)
 		{

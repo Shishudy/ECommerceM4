@@ -1,7 +1,11 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
-using System.Security.Claims;
-using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using Microsoft.AspNetCore.Hosting.Server;
+using System.ComponentModel;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using WebStore.Components.Pages.FrontOffice;
+
 namespace WebStore.Services.CostumeAuthStateProvider
 {
 	public class CustomAuthStateProvider : AuthenticationStateProvider
@@ -13,14 +17,20 @@ namespace WebStore.Services.CostumeAuthStateProvider
 		{
 			_localStorage = localStorage;
 		}
+		public void Notify()
+		{
+			NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+		}
 
-		public async void SetToken(string token)
+		//Serve para informar o Blazor que o estado de autenticação mudou(por exemplo, login ou logout).
+		//Todos os componentes que usam AuthenticationStateProvider ou<AuthorizeView> vão reagir e re-renderizar.
+		public async Task SetToken(string token)
 		{
 			await _localStorage.SetAsync(TokenKey, token);
 			NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
 		}
 
-		public async void Logout()
+		public async Task Logout()
 		{
 			await _localStorage.DeleteAsync(TokenKey);
 			NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
@@ -28,8 +38,6 @@ namespace WebStore.Services.CostumeAuthStateProvider
 
 		public override async Task<AuthenticationState> GetAuthenticationStateAsync()
 		{
-			AuthenticationState? result = null;
-
 			try
 			{
 				var storedToken = await _localStorage.GetAsync<string>(TokenKey);
@@ -39,14 +47,13 @@ namespace WebStore.Services.CostumeAuthStateProvider
 					? new ClaimsIdentity()
 					: new ClaimsIdentity(new JwtSecurityTokenHandler().ReadJwtToken(token).Claims, "jwt");
 
-				result = new AuthenticationState(new ClaimsPrincipal(identity));
+				return new AuthenticationState(new ClaimsPrincipal(identity));
 			}
 			catch (InvalidOperationException)
 			{
-				result = new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+				return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
 			}
-			return result;
 		}
-
 	}
 }
+

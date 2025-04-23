@@ -34,13 +34,19 @@
     private string password;
     private string errorMessage;
 
+    protected override async Task OnInitializedAsync()
+    {
+      
+        await AuthService.Logout();
+    }
+
     private async Task HandleLogin()
     {
         var result = await AuthService.Login(new LoginModel
-        {
-            Email = email,
-            Password = password
-        });
+            {
+                Email = email,
+                Password = password
+            });
 
         if (result == "success")
         {

@@ -8,49 +8,8 @@
 
 <PageTitle>Admin</PageTitle>
 
-@if (!_checkedAuth)
-{
-    <p>Verificando permissões...</p>
-}
-else if (_isAuthorized)
-{
     <h3>Bem-vindo, administrador!</h3>
 
-    <RadzenButton Text="Logout"
-                  Click="Logout"
-                  Style="margin-top: 20px;"
-                  ButtonStyle="ButtonStyle.Danger" />
-}
-
 @code {
-    [CascadingParameter]
-    private Task<AuthenticationState> AuthenticationStateTask { get; set; }
 
-    private bool _checkedAuth = false;
-    private bool _isAuthorized = false;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender && !_checkedAuth)
-        {
-            var authState = await AuthenticationStateTask;
-            var user = authState.User;
-
-            _isAuthorized = user.Identity.IsAuthenticated && user.IsInRole("Admin");
-
-            if (!_isAuthorized)
-            {
-                NavigationManager.NavigateTo("/admindoor", forceLoad: true);
-            }
-
-            _checkedAuth = true;
-            StateHasChanged();
-        }
-    }
-
-    private async Task Logout()
-    {
-        await AuthService.Logout();
-        NavigationManager.NavigateTo("/admindoor");
-    }
 }

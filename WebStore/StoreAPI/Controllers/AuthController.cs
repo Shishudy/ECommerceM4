@@ -54,7 +54,8 @@ namespace StoreAPI.Controllers
 			var claims = new List<Claim>
 	{
 		new Claim(ClaimTypes.Name, user.Email),
-		new Claim(ClaimTypes.Role, roles.First())
+		new Claim(ClaimTypes.Role, roles.First()),
+		new Claim(ClaimTypes.NameIdentifier, user.Id)
     };
 
 			var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JwtSettings:SecretKey"]));
@@ -65,7 +66,8 @@ namespace StoreAPI.Controllers
 				audience: _config["JwtSettings:Audience"],
 				claims: claims,
 				expires: DateTime.UtcNow.AddHours(2),
-				signingCredentials: creds);
+				signingCredentials: creds
+			);
 
 			var tokenStr = new JwtSecurityTokenHandler().WriteToken(token);
 			return Ok(tokenStr);

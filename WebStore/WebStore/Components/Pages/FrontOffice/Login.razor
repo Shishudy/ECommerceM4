@@ -1,6 +1,8 @@
 ﻿@page "/login"
 @inject NavigationManager NavigationManager
 @inject AuthService AuthService
+@inject AuthenticationStateProvider AuthProvider
+
 
 @rendermode InteractiveServer
 
@@ -56,7 +58,8 @@
             });
 
         if (result == "success")
-        {
+        {           
+            StateHasChanged();
             NavigationManager.NavigateTo("/");
         }
         else
