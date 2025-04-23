@@ -1,43 +1,48 @@
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Radzen;
+using WebStore;
 using WebStore.Components;
+using WebStore.Services.AuthService;
+using WebStore.Services.CostumeAuthStateProvider;
 
-namespace WebStore
+var builder = WebApplication.CreateBuilder(args);
+
+// Blazor
+builder.Services.AddRazorComponents()
+	.AddInteractiveServerComponents();
+
+// Radzen Services
+builder.Services.AddScoped<DialogService>();
+builder.Services.AddScoped<NotificationService>();
+builder.Services.AddScoped<TooltipService>();
+builder.Services.AddScoped<ContextMenuService>();
+
+
+// HTTP Client para API
+builder.Services.AddHttpClient("API", client =>
 {
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            var builder = WebApplication.CreateBuilder(args);
+	client.BaseAddress = new Uri("http://localhost:5125/"); 
+});
 
-            // Add services to the container.
-            builder.Services.AddRazorComponents()
-                .AddInteractiveServerComponents();
+// Custom Auth Provider
+builder.Services.AddScoped<CustomAuthStateProvider>();
+builder.Services.AddScoped<AuthenticationStateProvider>(provider => provider.GetRequiredService<CustomAuthStateProvider>());
+builder.Services.AddScoped<ProtectedLocalStorage>();
+// Auth Service
+builder.Services.AddScoped<AuthService>();
 
-			// Register Radzen services
-			builder.Services.AddScoped<DialogService>();
-			builder.Services.AddScoped<NotificationService>();
-			builder.Services.AddScoped<TooltipService>();
-			builder.Services.AddScoped<ContextMenuService>();
+var app = builder.Build();
 
-			// Register other services
-			builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://localhost:11825/") });
-			//builder.Services.AddScoped<>();
-
-			var app = builder.Build();
-
-            // Configure the HTTP request pipeline.
-            if (!app.Environment.IsDevelopment())
-            {
-                app.UseExceptionHandler("/Error");
-            }
-
-            app.UseStaticFiles();
-            app.UseAntiforgery();
-
-            app.MapRazorComponents<App>()
-                .AddInteractiveServerRenderMode();
-
-            app.Run();
-        }
-    }
+if (!app.Environment.IsDevelopment())
+{
+	app.UseExceptionHandler("/Error");
 }
+
+app.UseStaticFiles();
+app.UseAntiforgery();
+
+app.MapRazorComponents<App>()
+	.AddInteractiveServerRenderMode();
+
+app.Run();

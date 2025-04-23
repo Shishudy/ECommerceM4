@@ -1,6 +1,15 @@
-﻿@page "/admin"
+﻿@page "/adminhome"
+@inject NavigationManager NavigationManager
+@inject AuthService AuthService
 @layout WebStore.Components.Layout.BackOffice.MainBackLayout
-<h3>Teste</h3>
+
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+
+<PageTitle>Admin</PageTitle>
+
+    <h3>Bem-vindo, administrador!</h3>
+
 @code {
 
 }
