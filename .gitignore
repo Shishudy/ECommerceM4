@@ -16,3 +16,4 @@ WebStore/WebStore/obj/
 WebStore/StoreAPI/appsettings.json
 
 WebStore/WebStore/WebStore.csproj.user
+.fake
