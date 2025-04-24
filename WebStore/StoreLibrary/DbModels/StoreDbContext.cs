@@ -60,10 +60,15 @@ public partial class StoreDbContext : DbContext
             entity.Property(e => e.Email)
                 .HasMaxLength(50)
                 .HasColumnName("email");
-            entity.Property(e => e.FkUser).HasColumnName("fk_user");
+            entity.Property(e => e.FkUser)
+                .HasMaxLength(500)
+                .HasColumnName("fk_user");
             entity.Property(e => e.FullAddress)
                 .HasMaxLength(50)
                 .HasColumnName("full_address");
+            entity.Property(e => e.Name)
+                .HasMaxLength(50)
+                .HasColumnName("name");
             entity.Property(e => e.Phone)
                 .HasMaxLength(50)
                 .HasColumnName("phone");
@@ -138,14 +143,16 @@ public partial class StoreDbContext : DbContext
 
         modelBuilder.Entity<Favourite>(entity =>
         {
-            entity.HasKey(e => new { e.FkProduct, e.FkUser });
-
-            entity.ToTable("Favourite");
+            entity
+                .HasNoKey()
+                .ToTable("Favourite");
 
             entity.Property(e => e.FkProduct).HasColumnName("fk_product");
-            entity.Property(e => e.FkUser).HasColumnName("fk_user");
+            entity.Property(e => e.FkUser)
+                .HasMaxLength(500)
+                .HasColumnName("fk_user");
 
-            entity.HasOne(d => d.FkProductNavigation).WithMany(p => p.Favourites)
+            entity.HasOne(d => d.FkProductNavigation).WithMany()
                 .HasForeignKey(d => d.FkProduct)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Favourite_Product");
@@ -254,7 +261,9 @@ public partial class StoreDbContext : DbContext
             entity.Property(e => e.FkAddressShipment).HasColumnName("fk_address_shipment");
             entity.Property(e => e.FkInvoice).HasColumnName("fk_invoice");
             entity.Property(e => e.FkReview).HasColumnName("fk_review");
-            entity.Property(e => e.FkUser).HasColumnName("fk_user");
+            entity.Property(e => e.FkUser)
+                .HasMaxLength(500)
+                .HasColumnName("fk_user");
             entity.Property(e => e.Status)
                 .HasMaxLength(50)
                 .HasColumnName("status");
@@ -274,32 +283,33 @@ public partial class StoreDbContext : DbContext
 
         modelBuilder.Entity<PurchaseProduct>(entity =>
         {
-            entity.HasKey(e => new { e.PkPurchase, e.PkProduct });
+            entity.HasKey(e => new { e.FkPurchase, e.FkProduct });
 
             entity.ToTable("PurchaseProduct");
 
-            entity.Property(e => e.PkPurchase).HasColumnName("pk_purchase");
-            entity.Property(e => e.PkProduct).HasColumnName("pk_product");
+            entity.Property(e => e.FkPurchase).HasColumnName("fk_purchase");
+            entity.Property(e => e.FkProduct).HasColumnName("fk_product");
             entity.Property(e => e.FkReview).HasColumnName("fk_review");
             entity.Property(e => e.FkUser).HasColumnName("fk_user");
+            entity.Property(e => e.Price).HasColumnName("price");
             entity.Property(e => e.Qtt).HasColumnName("qtt");
             entity.Property(e => e.Status)
                 .HasMaxLength(50)
                 .HasColumnName("status");
 
-            entity.HasOne(d => d.FkReviewNavigation).WithMany(p => p.PurchaseProducts)
-                .HasForeignKey(d => d.FkReview)
-                .HasConstraintName("FK_PurchaseProduct_Review");
-
-            entity.HasOne(d => d.PkProductNavigation).WithMany(p => p.PurchaseProducts)
-                .HasForeignKey(d => d.PkProduct)
+            entity.HasOne(d => d.FkProductNavigation).WithMany(p => p.PurchaseProducts)
+                .HasForeignKey(d => d.FkProduct)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_PurchaseProduct_Product");
 
-            entity.HasOne(d => d.PkPurchaseNavigation).WithMany(p => p.PurchaseProducts)
-                .HasForeignKey(d => d.PkPurchase)
+            entity.HasOne(d => d.FkPurchaseNavigation).WithMany(p => p.PurchaseProducts)
+                .HasForeignKey(d => d.FkPurchase)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_PurchaseProduct_Purchase");
+
+            entity.HasOne(d => d.FkReviewNavigation).WithMany(p => p.PurchaseProducts)
+                .HasForeignKey(d => d.FkReview)
+                .HasConstraintName("FK_PurchaseProduct_Review");
         });
 
         modelBuilder.Entity<Review>(entity =>
@@ -340,14 +350,16 @@ public partial class StoreDbContext : DbContext
 
         modelBuilder.Entity<UserImage>(entity =>
         {
-            entity.HasKey(e => new { e.FkImage, e.FkUser });
-
-            entity.ToTable("UserImage");
+            entity
+                .HasNoKey()
+                .ToTable("UserImage");
 
             entity.Property(e => e.FkImage).HasColumnName("fk_image");
-            entity.Property(e => e.FkUser).HasColumnName("fk_user");
+            entity.Property(e => e.FkUser)
+                .HasMaxLength(500)
+                .HasColumnName("fk_user");
 
-            entity.HasOne(d => d.FkImageNavigation).WithMany(p => p.UserImages)
+            entity.HasOne(d => d.FkImageNavigation).WithMany()
                 .HasForeignKey(d => d.FkImage)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_UserImage_Image");

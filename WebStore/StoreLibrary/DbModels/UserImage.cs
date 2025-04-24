@@ -7,7 +7,7 @@ public partial class UserImage
 {
     public int FkImage { get; set; }
 
-    public int FkUser { get; set; }
+    public string FkUser { get; set; } = null!;
 
     public virtual Image FkImageNavigation { get; set; } = null!;
 }
