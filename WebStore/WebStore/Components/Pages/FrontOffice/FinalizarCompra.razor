@@ -1,49 +1,224 @@
 ﻿@page "/finalizarcompra"
 @rendermode InteractiveServer
+@if (order == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <RadzenTemplateForm Data="@order" Submit="@((Order args) => { Submit(args); })">
+    <RadzenRow Gap="2rem" class="rz-p-0 rz-p-lg-4">
+        <RadzenColumn Size="12" SizeMD="6">
+            <RadzenStack>
 
-<h3 style="margin-bottom: 1rem;">Finalizar Compra</h3>
+            <RadzenFieldset Text="Contact Info">
+                <RadzenStack Gap="1rem">
+                <RadzenTabs SelectedIndex="0">
+                    <Tabs>
+                        <RadzenTabsItem Text="Shipping Address">
+                            <RadzenStack>
+                                <RadzenRow AlignItems="AlignItems.Center">
+                                    <RadzenColumn Size="12" SizeMD="4">
+                                        <RadzenLabel Text="Name" Component="Name"/>
+                                    </RadzenColumn>
+                                    <RadzenColumn Size="12" SizeMD="8">
+                                        <RadzenTextBox Style="width: 100%;" Name="Name" />
+                                    </RadzenColumn>
+                                </RadzenRow>
+                                <RadzenRow AlignItems="AlignItems.Center">
+                                    <RadzenColumn Size="12" SizeMD="4">
+                                        <RadzenLabel Text="Country" Component="Country"/>
+                                    </RadzenColumn>
+                                    <RadzenColumn Size="12" SizeMD="8">
+                                        <RadzenDropDown @bind-Value="order.Country" Placeholder="Portugal" Data="@countries" Style="width: 100%;" TextProperty="Name" ValueProperty="Id" Name="Country">
+                                        </RadzenDropDown>
+                                    </RadzenColumn>
+                                </RadzenRow>
+                                <RadzenRow AlignItems="AlignItems.Center">
+                                    <RadzenColumn Size="12" SizeMD="4">
+                                        <RadzenLabel Text="Address Line 1" Component="Address1" />
+                                    </RadzenColumn>
+                                    <RadzenColumn Size="12" SizeMD="8">
+                                        <RadzenTextBox Style="width: 100%;" Name="Address1" />
+                                    </RadzenColumn>
+                                </RadzenRow>
+                                <RadzenRow AlignItems="AlignItems.Center">
+                                    <RadzenColumn Size="12" SizeMD="4">
+                                        <RadzenLabel Text="Address Line 2" Component="Address2"/>
+                                    </RadzenColumn>
+                                    <RadzenColumn Size="12" SizeMD="8">
+                                        <RadzenTextBox Style="width: 100%;" Name="Address2" />
+                                    </RadzenColumn>
+                                </RadzenRow>
+                                <RadzenRow AlignItems="AlignItems.Center">
+                                    <RadzenColumn Size="12" SizeMD="4">
+                                        <RadzenLabel Text="City" Component="City"/>
+                                    </RadzenColumn>
+                                    <RadzenColumn Size="12" SizeMD="8">
+                                        <RadzenTextBox Style="width: 100%;" Name="City" />
+                                    </RadzenColumn>
+                                </RadzenRow>
+                                <RadzenRow AlignItems="AlignItems.Center">
+                                    <RadzenColumn Size="12" SizeMD="4">
+                                        <RadzenLabel Text="Zip / Postal Code" Component="Zip" />
+                                    </RadzenColumn>
+                                    <RadzenColumn Size="12" SizeMD="8">
+                                        <RadzenTextBox Style="width: 100%;" Name="Zip" />
+                                    </RadzenColumn>
+                                </RadzenRow>
+                                <RadzenRow AlignItems="AlignItems.Center">
+                                    <RadzenColumn Size="12" SizeMD="4">
+                                        <RadzenLabel Text="State / Province / Region" Component="State"/>
+                                    </RadzenColumn>
+                                    <RadzenColumn Size="12" SizeMD="8">
+                                        <RadzenTextBox Style="width: 100%;" Name="State" />
+                                    </RadzenColumn>
+                                </RadzenRow>
 
-<div class="checkout-form">
+                                @if (value == false && value2 == true)
+                                {
+                                    <RadzenRow AlignItems="AlignItems.Center">
+                                        <RadzenColumn Size="12" SizeMD="4">
+                                            <RadzenLabel Text="Nif" Component="State"/>
+                                        </RadzenColumn>
+                                        <RadzenColumn Size="12" SizeMD="8">
+                                            <RadzenTextBox Style="width: 100%;" Name="State" />
+                                        </RadzenColumn>
+                                    </RadzenRow>
+                                }
 
-    <div class="checkout-group">
-        <RadzenLabel Text="Cartão de crédito" />
-        <RadzenTextBox Placeholder="**** **** **** 1234" Style="width: 100%;" />
+                                <RadzenRow AlignItems="AlignItems.Center" Gap="0.5rem">
+                                    <RadzenColumn Size="12" SizeMD="4">
+                                        <RadzenLabel Text="Fatura Simples" Component="State"/>
+                                    </RadzenColumn>
+                                    <RadzenColumn Size="12" SizeMD="8">
+                                        <RadzenStack class="rz-p-sm-12">
+                                            <RadzenSwitch 
+                                            @bind-Value=@value 
+                                            Change=@(args => OnChange(args, "Switch")) 
+                                            InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "Switch value" }})"
+                                            Style="margin: 0; padding: 0;"/>
+                                        </RadzenStack>
+                                    </RadzenColumn>
+                                </RadzenRow>
+                                @if (value == false)
+                                {
+                                    <RadzenRow AlignItems="AlignItems.Center" Gap="0.5rem">
+                                        <RadzenColumn Size="12" SizeMD="4">
+                                            <RadzenLabel Text="Usar morada de envio para faturação_" Component="State"/>
+                                        </RadzenColumn>
+                                        <RadzenColumn Size="12" SizeMD="8">
+                                            <RadzenStack class="rz-p-sm-12">
+                                                <RadzenSwitch 
+                                                    @bind-Value=@value2 
+                                                    Change=@(args => OnChange(args, "Switch")) 
+                                                    InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "Switch value" }})"
+                                                    Style="margin: 0; padding: 0;"/>
+                                            </RadzenStack>
+                                        </RadzenColumn>
+                                    </RadzenRow>
+                                }
 
-        <RadzenLabel Text="Nome Associado" />
-        <RadzenTextBox Style="width: 100%;" />
-
-        <RadzenLabel Text="NIF" />
-        <RadzenTextBox Style="width: 100%;" />
-
-        <RadzenLabel Text="Nº de documento" />
-        <RadzenTextBox Style="width: 100%;" />
-    </div>
-
-    <div class="checkout-group">
-        <RadzenLabel Text="Morada" />
-        <RadzenTextBox Placeholder="Rua / porta / andar" Style="width: 100%;" />
-
-        <RadzenLabel Text="Código Postal" />
-        <RadzenTextBox Style="width: 100%;" />
-
-        <RadzenLabel Text="Andar / Lado" />
-        <RadzenTextBox Style="width: 100%;" />
-
-        <RadzenLabel Text="Informações Úteis" />
-        <RadzenTextBox Style="width: 100%;" />
-    </div>
-</div>
-
-<div class="checkout-footer">
-    <RadzenButton Text="Avançar"
-                  Icon="check"
-                  ButtonStyle="ButtonStyle.Primary"
-                  Click="@CompletarCompra" />
-</div>
+                            </RadzenStack>
+                        </RadzenTabsItem>
+                        @if (value == false && value2 == false)
+                        {
+                            <RadzenTabsItem Text="Billing Address">
+                            </RadzenTabsItem>
+                        }
+                    </Tabs>
+                </RadzenTabs>
+                </RadzenStack>
+            </RadzenFieldset>
+            </RadzenStack>
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeMD="6">
+            <RadzenStack>
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="1rem" class="rz-mt-8 rz-mb-4">
+        <RadzenButton ButtonType="ButtonType.Submit" Size="ButtonSize.Large" Icon="save" Text="Save" />
+        <RadzenButton ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Large" Icon="cancel" Text="Cancel" Click="@Cancel" />
+    </RadzenStack>
+    </RadzenTemplateForm>
+}
 
 @code {
-    private void CompletarCompra()
+        bool value;
+        bool value2;
+
+
+
+    void OnChange(bool? value, string name)
     {
-        Console.WriteLine("Compra finalizada!");
+        // console.Log($"{name} value changed to {value}");
+    }
+    public class Order
+    {
+        public int CardId { get; set; }
+        public string CardNr { get; set; }
+        public DateTime ExpiryDate { get; set; }
+        public string CardHolder { get; set; }
+        public string Name { get; set; }
+        public string Address1 { get; set; }
+        public string Address2 { get; set; }
+        public string City { get; set; }
+        public string State { get; set; }
+        public string Zip { get; set; }
+        public int Country { get; set; }
+        public int StoreId { get; set; }
+        public string Warehouse { get; set; }
+        public string Region { get; set; }
+        public string System { get; set; }
+        public int TransId { get; set; }
+        public string Register { get; set; }
+        public string Clerk { get; set; }
+        public decimal Amount { get; set; }
+        public decimal Tax { get; set; }
+        public DateTime OrderDate { get; set; }
+        public DateTime ShipDate { get; set; }
+    }
+
+    public class CreditCard
+    {
+        public int CardId { get; set; }
+        public string CardNr { get; set; }
+    }
+
+    public class Country
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
+
+    Order order = new Order()
+    {
+        ExpiryDate = DateTime.Parse("10/10/2022"),
+        OrderDate = DateTime.Now,
+        ShipDate = DateTime.Now
+    };
+
+    List<CreditCard> cards = new List<CreditCard>()
+{
+        new CreditCard() { CardId = 1, CardNr = "5555555555554444" },
+        new CreditCard() { CardId = 2, CardNr = "4012888888881881" }
+    };
+
+    List<Country> countries = new List<Country>()
+{
+        new Country() { Id = 1, Name = "USA" },
+        new Country() { Id = 2, Name = "Germany" },
+        new Country() { Id = 3, Name = "Portugal" },
+    };
+
+    void Submit(Order arg)
+    {
+        //
+    }
+
+    void Cancel()
+    {
+        //
     }
 }

@@ -15,8 +15,6 @@ public partial class Review
 
     public bool Toggle { get; set; }
 
-    public virtual ICollection<CartHistory> CartHistories { get; set; } = new List<CartHistory>();
-
     public virtual ICollection<PurchaseProduct> PurchaseProducts { get; set; } = new List<PurchaseProduct>();
 
     public virtual ICollection<Purchase> Purchases { get; set; } = new List<Purchase>();

@@ -19,10 +19,6 @@ public partial class Purchase
 
     public int? FkAddressShipment { get; set; }
 
-    public virtual ICollection<CartHistory> CartHistories { get; set; } = new List<CartHistory>();
-
-    public virtual ICollection<Cart> Carts { get; set; } = new List<Cart>();
-
     public virtual Address? FkAddressShipmentNavigation { get; set; }
 
     public virtual Invoice? FkInvoiceNavigation { get; set; }

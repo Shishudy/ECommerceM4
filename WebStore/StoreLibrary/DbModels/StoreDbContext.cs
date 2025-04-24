@@ -19,11 +19,7 @@ public partial class StoreDbContext : DbContext
 
     public virtual DbSet<Campaign> Campaigns { get; set; }
 
-    public virtual DbSet<Cart> Carts { get; set; }
-
-    public virtual DbSet<CartHistory> CartHistories { get; set; }
-
-    public virtual DbSet<CartProdut> CartProduts { get; set; }
+    public virtual DbSet<CampaignProduct> CampaignProducts { get; set; }
 
     public virtual DbSet<Category> Categories { get; set; }
 
@@ -103,89 +99,27 @@ public partial class StoreDbContext : DbContext
                         j.IndexerProperty<int>("FkCampaign").HasColumnName("fk_campaign");
                         j.IndexerProperty<int>("FkImage").HasColumnName("fk_image");
                     });
-
-            entity.HasMany(d => d.FkProducts).WithMany(p => p.FkCampaigns)
-                .UsingEntity<Dictionary<string, object>>(
-                    "CampaignProduct",
-                    r => r.HasOne<Product>().WithMany()
-                        .HasForeignKey("FkProduct")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK_CampaignProduct_Product"),
-                    l => l.HasOne<Campaign>().WithMany()
-                        .HasForeignKey("FkCampaign")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK_CampaignProduct_Campaign"),
-                    j =>
-                    {
-                        j.HasKey("FkCampaign", "FkProduct");
-                        j.ToTable("CampaignProduct");
-                        j.IndexerProperty<int>("FkCampaign").HasColumnName("fk_campaign");
-                        j.IndexerProperty<int>("FkProduct").HasColumnName("fk_product");
-                    });
         });
 
-        modelBuilder.Entity<Cart>(entity =>
+        modelBuilder.Entity<CampaignProduct>(entity =>
         {
-            entity.HasKey(e => e.PkCart);
+            entity.HasKey(e => new { e.FkCampaign, e.FkProduct });
 
-            entity.ToTable("Cart");
+            entity.ToTable("CampaignProduct");
 
-            entity.Property(e => e.PkCart)
-                .ValueGeneratedNever()
-                .HasColumnName("pk_cart");
-            entity.Property(e => e.FkPurchase).HasColumnName("fk_purchase");
-            entity.Property(e => e.FkUser).HasColumnName("fk_user");
+            entity.Property(e => e.FkCampaign).HasColumnName("fk_campaign");
+            entity.Property(e => e.FkProduct).HasColumnName("fk_product");
+            entity.Property(e => e.Discount).HasColumnName("discount");
 
-            entity.HasOne(d => d.FkPurchaseNavigation).WithMany(p => p.Carts)
-                .HasForeignKey(d => d.FkPurchase)
-                .HasConstraintName("FK_Cart_Purchase");
-        });
-
-        modelBuilder.Entity<CartHistory>(entity =>
-        {
-            entity.HasKey(e => e.PkCart);
-
-            entity.ToTable("CartHistory");
-
-            entity.Property(e => e.PkCart)
-                .ValueGeneratedNever()
-                .HasColumnName("pk_cart");
-            entity.Property(e => e.FkPurchase).HasColumnName("fk_purchase");
-            entity.Property(e => e.FkReview).HasColumnName("fk_review");
-            entity.Property(e => e.FkUser).HasColumnName("fk_user");
-
-            entity.HasOne(d => d.FkPurchaseNavigation).WithMany(p => p.CartHistories)
-                .HasForeignKey(d => d.FkPurchase)
-                .HasConstraintName("FK_CartHistory_Purchase");
-
-            entity.HasOne(d => d.FkReviewNavigation).WithMany(p => p.CartHistories)
-                .HasForeignKey(d => d.FkReview)
-                .HasConstraintName("FK_CartHistory_Review");
-        });
-
-        modelBuilder.Entity<CartProdut>(entity =>
-        {
-            entity.HasKey(e => new { e.FkCart, e.FkEan });
-
-            entity.ToTable("CartProdut");
-
-            entity.Property(e => e.FkCart).HasColumnName("fk_cart");
-            entity.Property(e => e.FkEan).HasColumnName("fk_ean");
-
-            entity.HasOne(d => d.FkCartNavigation).WithMany(p => p.CartProduts)
-                .HasForeignKey(d => d.FkCart)
+            entity.HasOne(d => d.FkCampaignNavigation).WithMany(p => p.CampaignProducts)
+                .HasForeignKey(d => d.FkCampaign)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_CartProdut_Cart");
+                .HasConstraintName("FK_CampaignProduct_Campaign");
 
-            entity.HasOne(d => d.FkCart1).WithMany(p => p.CartProduts)
-                .HasForeignKey(d => d.FkCart)
+            entity.HasOne(d => d.FkProductNavigation).WithMany(p => p.CampaignProducts)
+                .HasForeignKey(d => d.FkProduct)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_CartProdut_CartHistory");
-
-            entity.HasOne(d => d.FkEanNavigation).WithMany(p => p.CartProduts)
-                .HasForeignKey(d => d.FkEan)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_CartProdut_Product");
+                .HasConstraintName("FK_CampaignProduct_Product");
         });
 
         modelBuilder.Entity<Category>(entity =>
