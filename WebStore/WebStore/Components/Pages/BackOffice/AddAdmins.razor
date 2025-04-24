@@ -1,12 +1,13 @@
 ﻿@page "/addadmin"
+@inject NotificationService NotificationService
 @inject AuthService AuthService
+@inherits AdminProtectedPage
 @layout WebStore.Components.Layout.BackOffice.MainBackLayout
 @inject NavigationManager NavigationManager
-
-@using System.Security.Claims
-@using Microsoft.AspNetCore.Components.Authorization
-
 @rendermode InteractiveServer
+
+
+
         <div class="login-modal">
             <h2>Adicionar Admin</h2>
 
@@ -56,6 +57,15 @@
 
         if (result is string success && success == "success")
         {
+            NotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Admin criado com sucesso!",
+                    Detail = "Redirecionando...",
+                    Duration = 3000
+                });
+
+            await Task.Delay(3000); 
             NavigationManager.NavigateTo("/adminhome");
         }
         else if (result is List<string> errors)
@@ -67,4 +77,5 @@
             errorMessage = "Erro ao criar admin.";
         }
     }
-}
+ }
+ 

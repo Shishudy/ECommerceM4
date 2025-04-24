@@ -43,17 +43,31 @@ namespace WebStore.Services.CostumeAuthStateProvider
 				var storedToken = await _localStorage.GetAsync<string>(TokenKey);
 				var token = storedToken.Success ? storedToken.Value : null;
 
-				var identity = string.IsNullOrWhiteSpace(token)
-					? new ClaimsIdentity()
-					: new ClaimsIdentity(new JwtSecurityTokenHandler().ReadJwtToken(token).Claims, "jwt");
+				Console.WriteLine("Token armazenado: " + token);
 
+				if (string.IsNullOrWhiteSpace(token))
+				{
+					Console.WriteLine("Token está vazio ou nulo.");
+					return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+				}
+
+				var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
+
+				foreach (var claim in jwt.Claims)
+				{
+					Console.WriteLine($"Claim: {claim.Type} - {claim.Value}");
+				}
+
+				var identity = new ClaimsIdentity(jwt.Claims, "jwt", ClaimTypes.Name, ClaimTypes.Role);
 				return new AuthenticationState(new ClaimsPrincipal(identity));
 			}
-			catch (InvalidOperationException)
+			catch (Exception ex)
 			{
+				Console.WriteLine("Erro ao obter estado de autenticação: " + ex.Message);
 				return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
 			}
 		}
+
 	}
 }
 
