@@ -1,9 +1,8 @@
 ﻿@page "/admindoor"
-
 @inject AuthService AuthService
 @inject NavigationManager NavigationManager
-
 @rendermode InteractiveServer
+
 
 <div class="login-modal">
     <h2>Admin Login</h2>
@@ -33,12 +32,6 @@
     private string email;
     private string password;
     private string errorMessage;
-
-    protected override async Task OnInitializedAsync()
-    {
-      
-        await AuthService.Logout();
-    }
 
     private async Task HandleLogin()
     {
