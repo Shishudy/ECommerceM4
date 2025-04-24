@@ -23,8 +23,6 @@ public partial class Product
 
     public virtual ICollection<CampaignProduct> CampaignProducts { get; set; } = new List<CampaignProduct>();
 
-    public virtual ICollection<Favourite> Favourites { get; set; } = new List<Favourite>();
-
     public virtual Image FkImageNavigation { get; set; } = null!;
 
     public virtual ICollection<PurchaseProduct> PurchaseProducts { get; set; } = new List<PurchaseProduct>();

@@ -1,15 +1,10 @@
 ﻿@page "/adminhome"
-@inject NavigationManager NavigationManager
-@inject AuthService AuthService
+@inherits AdminProtectedPage
+@rendermode InteractiveServer
 @layout WebStore.Components.Layout.BackOffice.MainBackLayout
-
-@using System.Security.Claims
-@using Microsoft.AspNetCore.Components.Authorization
-
-<PageTitle>Admin</PageTitle>
 
     <h3>Bem-vindo, administrador!</h3>
 
 @code {
-
 }
+

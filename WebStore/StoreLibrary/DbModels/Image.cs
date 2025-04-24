@@ -13,8 +13,6 @@ public partial class Image
 
     public virtual ICollection<Product> Products { get; set; } = new List<Product>();
 
-    public virtual ICollection<UserImage> UserImages { get; set; } = new List<UserImage>();
-
     public virtual ICollection<Campaign> FkCampaigns { get; set; } = new List<Campaign>();
 
     public virtual ICollection<Review> FkReviews { get; set; } = new List<Review>();
