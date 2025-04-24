@@ -5,9 +5,9 @@ namespace StoreLibrary.DbModels;
 
 public partial class PurchaseProduct
 {
-    public int PkPurchase { get; set; }
+    public int FkPurchase { get; set; }
 
-    public int PkProduct { get; set; }
+    public int FkProduct { get; set; }
 
     public string? Status { get; set; }
 
@@ -17,9 +17,11 @@ public partial class PurchaseProduct
 
     public int? FkReview { get; set; }
 
+    public double Price { get; set; }
+
+    public virtual Product FkProductNavigation { get; set; } = null!;
+
+    public virtual Purchase FkPurchaseNavigation { get; set; } = null!;
+
     public virtual Review? FkReviewNavigation { get; set; }
-
-    public virtual Product PkProductNavigation { get; set; } = null!;
-
-    public virtual Purchase PkPurchaseNavigation { get; set; } = null!;
 }

@@ -7,7 +7,7 @@ public partial class Address
 {
     public int PkAddress { get; set; }
 
-    public int? FkUser { get; set; }
+    public string? FkUser { get; set; }
 
     public string Country { get; set; } = null!;
 
@@ -16,6 +16,8 @@ public partial class Address
     public string Email { get; set; } = null!;
 
     public string FullAddress { get; set; } = null!;
+
+    public string? Name { get; set; }
 
     public virtual ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
 
