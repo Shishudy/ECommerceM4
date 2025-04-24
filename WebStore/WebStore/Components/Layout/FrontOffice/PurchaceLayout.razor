@@ -1,0 +1,82 @@
+﻿@page "/purchaseLayout"
+@rendermode InteractiveServer
+
+
+<div class="layout-container">
+    <!-- Header Section with Select Bar -->
+    <header class="layout-header rz-shadow-2">
+        <RadzenSelectBar @bind-Value="@selectedValue" TValue="int" Style="width: 100%;">
+            <Items>
+                @foreach (var dataItem in data)
+                {
+                    <RadzenSelectBarItem 
+                        Text="@dataItem.Name" 
+                        Value="@dataItem.Id" 
+                        Disabled="@(dataItem.IsDisabled.HasValue ? dataItem.IsDisabled.Value : false)" 
+                        Visible="@(dataItem.IsVisible.HasValue ? dataItem.IsVisible.Value : true)" />
+                }
+            </Items>
+        </RadzenSelectBar>
+    </header>
+
+    <main class="layout-content rz-p-4">
+        @* Dynamically Render Components Based on Selected Value *@
+        @if (selectedValue == 1)
+        {
+            @* <ComponentOne /> *@
+        }
+        else if (selectedValue == 2)
+        {
+            <finalizarcompra />
+        }
+        else if (selectedValue == 3)
+        {
+            @* <ComponentThree /> *@
+        }
+        else
+        {
+            <p>Please select an option from the Select Bar.</p>
+        }
+
+        @* Example Button to Change Content Dynamically *@
+        @* <RadzenButton Text="Show Additional Content" Click="@ShowAdditionalContent" />
+        @if (showAdditionalContent)
+        {
+            <AdditionalComponent />
+        } *@
+    </main>
+
+</div>
+
+@code {
+    int selectedValue = 1;
+
+    public class MyObject
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public bool? IsDisabled { get; set; }
+        public bool? IsVisible { get; set; }
+    }
+
+	    IEnumerable<MyObject> data = new MyObject[]
+    {
+        new MyObject() {
+            Id = 1,
+            Name = "Validar Compra"
+        },
+        new MyObject() {
+            Id = 2,
+            Name = "Método de Envio",
+        },
+        new MyObject() {
+            Id = 3,
+            Name = "Pagamento",
+        },
+        new MyObject() {
+            Id = 4,
+            Name = "Confirmação",
+            IsDisabled = true,
+        },
+    };
+}

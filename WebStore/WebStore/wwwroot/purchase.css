@@ -1,0 +1,19 @@
+.layout-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* .layout-header {
+    background-color: var(--rz-primary);
+    color: white;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+} */
+
+.layout-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    background-color: var(--rz-light);
+}
