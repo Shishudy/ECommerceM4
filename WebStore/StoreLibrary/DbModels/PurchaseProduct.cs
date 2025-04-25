@@ -13,8 +13,6 @@ public partial class PurchaseProduct
 
     public int Qtt { get; set; }
 
-    public string? FkUser { get; set; }
-
     public int? FkReview { get; set; }
 
     public double Price { get; set; }

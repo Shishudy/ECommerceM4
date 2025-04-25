@@ -11,6 +11,8 @@ public partial class Campaign
 
     public DateOnly DateEnd { get; set; }
 
+    public string Name { get; set; } = null!;
+
     public virtual ICollection<CampaignProduct> CampaignProducts { get; set; } = new List<CampaignProduct>();
 
     public virtual ICollection<Image> FkImages { get; set; } = new List<Image>();
