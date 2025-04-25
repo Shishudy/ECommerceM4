@@ -1,5 +1,7 @@
 ﻿@page "/purchaseLayout"
 @rendermode InteractiveServer
+@using WebStore.Components.Pages.FrontOffice.Purchase
+@inject IJSRuntime JSRuntime
 
 
 <div class="layout-container">
@@ -17,6 +19,9 @@
                 }
             </Items>
         </RadzenSelectBar>
+        <RadzenSwitch @bind-Value="@isDarkMode" Change="@ToggleTheme" />
+        <span>@(isDarkMode ? "Dark Mode" : "Light Mode")</span>
+
     </header>
 
     <main class="layout-content rz-p-4">
@@ -27,11 +32,11 @@
         }
         else if (selectedValue == 2)
         {
-            <finalizarcompra />
+            <FinalizarCompra />
         }
         else if (selectedValue == 3)
         {
-            @* <ComponentThree /> *@
+            <Pagamento />
         }
         else
         {
@@ -48,8 +53,10 @@
 
 </div>
 
+
+
 @code {
-    int selectedValue = 1;
+    int selectedValue = 2;
 
     public class MyObject
     {
@@ -68,10 +75,12 @@
         new MyObject() {
             Id = 2,
             Name = "Método de Envio",
+            IsDisabled = false,
         },
         new MyObject() {
             Id = 3,
             Name = "Pagamento",
+            IsDisabled = false,
         },
         new MyObject() {
             Id = 4,
@@ -79,4 +88,14 @@
             IsDisabled = true,
         },
     };
+    
+    bool isDarkMode = false;
+    async Task ToggleTheme(bool value)
+    {
+        isDarkMode = value ;
+        var themeClass = isDarkMode ? "dark-theme" : "light-theme";
+
+        // Use the injected JSRuntime instance to call JavaScript
+        await JSRuntime.InvokeVoidAsync("eval", $"document.body.className = '{themeClass}'");
+    }
 }

@@ -65,6 +65,8 @@ else
             <RadzenFieldset Text="Contact Info">
                 <RadzenStack Gap="1rem">
                 <RadzenTabs SelectedIndex="0">
+
+                    
                     <Tabs>
                         <RadzenTabsItem Text="Shipping Address">
                             <RadzenStack>
@@ -183,7 +185,6 @@ else
 
         @* @Body *@
     @* </main>
-
 </div> *@
 
 @code {
@@ -228,10 +229,19 @@ else
     }
     public class Order
     {
+        @* cartao bancario dto *@
         public int CardId { get; set; }
         public string CardNr { get; set; }
         public DateTime ExpiryDate { get; set; }
         public string CardHolder { get; set; }
+    @* public class CreditCard
+    {
+        public int CardId { get; set; }
+        public string CardNr { get; set; }
+    } *@
+
+
+        @* addresso dto *@
         public string Name { get; set; }
         public string Address1 { get; set; }
         public string Address2 { get; set; }
@@ -239,6 +249,10 @@ else
         public string State { get; set; }
         public string Zip { get; set; }
         public int Country { get; set; }
+
+
+
+        @* sugestoes *@
         public int StoreId { get; set; }
         public string Warehouse { get; set; }
         public string Region { get; set; }
@@ -252,11 +266,6 @@ else
         public DateTime ShipDate { get; set; }
     }
 
-    public class CreditCard
-    {
-        public int CardId { get; set; }
-        public string CardNr { get; set; }
-    }
 
     public class Country
     {
@@ -271,11 +280,11 @@ else
         ShipDate = DateTime.Now
     };
 
-    List<CreditCard> cards = new List<CreditCard>()
+    @* List<CreditCard> cards = new List<CreditCard>()
 {
         new CreditCard() { CardId = 1, CardNr = "5555555555554444" },
         new CreditCard() { CardId = 2, CardNr = "4012888888881881" }
-    };
+    }; *@
 
     List<Country> countries = new List<Country>()
 {

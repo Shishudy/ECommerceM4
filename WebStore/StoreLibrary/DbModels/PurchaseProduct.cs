@@ -13,7 +13,7 @@ public partial class PurchaseProduct
 
     public int Qtt { get; set; }
 
-    public int? FkUser { get; set; }
+    public string? FkUser { get; set; }
 
     public int? FkReview { get; set; }
 
