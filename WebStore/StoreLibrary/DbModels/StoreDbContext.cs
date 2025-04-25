@@ -21,6 +21,8 @@ public partial class StoreDbContext : DbContext
 
     public virtual DbSet<CampaignProduct> CampaignProducts { get; set; }
 
+    public virtual DbSet<Card> Cards { get; set; }
+
     public virtual DbSet<Category> Categories { get; set; }
 
     public virtual DbSet<Favourite> Favourites { get; set; }
@@ -36,6 +38,8 @@ public partial class StoreDbContext : DbContext
     public virtual DbSet<PurchaseProduct> PurchaseProducts { get; set; }
 
     public virtual DbSet<Review> Reviews { get; set; }
+
+    public virtual DbSet<User> Users { get; set; }
 
     public virtual DbSet<UserImage> UserImages { get; set; }
 
@@ -72,6 +76,7 @@ public partial class StoreDbContext : DbContext
             entity.Property(e => e.Phone)
                 .HasMaxLength(50)
                 .HasColumnName("phone");
+            entity.Property(e => e.Toggle).HasColumnName("toggle");
         });
 
         modelBuilder.Entity<Campaign>(entity =>
@@ -85,6 +90,9 @@ public partial class StoreDbContext : DbContext
                 .HasColumnName("pk_campaign");
             entity.Property(e => e.DateEnd).HasColumnName("date_end");
             entity.Property(e => e.DateStart).HasColumnName("date_start");
+            entity.Property(e => e.Name)
+                .HasMaxLength(50)
+                .HasColumnName("name");
 
             entity.HasMany(d => d.FkImages).WithMany(p => p.FkCampaigns)
                 .UsingEntity<Dictionary<string, object>>(
@@ -125,6 +133,27 @@ public partial class StoreDbContext : DbContext
                 .HasForeignKey(d => d.FkProduct)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_CampaignProduct_Product");
+        });
+
+        modelBuilder.Entity<Card>(entity =>
+        {
+            entity.HasKey(e => e.PkCard);
+
+            entity.ToTable("card");
+
+            entity.Property(e => e.PkCard)
+                .ValueGeneratedNever()
+                .HasColumnName("pk_card");
+            entity.Property(e => e.Code).HasColumnName("code");
+            entity.Property(e => e.Expiration).HasColumnName("expiration");
+            entity.Property(e => e.FkUser)
+                .HasMaxLength(500)
+                .HasColumnName("fk_user");
+            entity.Property(e => e.Name)
+                .HasMaxLength(50)
+                .HasColumnName("name");
+            entity.Property(e => e.Number).HasColumnName("number");
+            entity.Property(e => e.Toogle).HasColumnName("toogle");
         });
 
         modelBuilder.Entity<Category>(entity =>
@@ -184,6 +213,7 @@ public partial class StoreDbContext : DbContext
             entity.Property(e => e.PkInvoice)
                 .ValueGeneratedNever()
                 .HasColumnName("pk_invoice");
+            entity.Property(e => e.Amount).HasColumnName("amount");
             entity.Property(e => e.DateInvoice).HasColumnName("date_invoice");
             entity.Property(e => e.FkAddressInvoice).HasColumnName("fk_address_invoice");
             entity.Property(e => e.Name)
@@ -259,6 +289,7 @@ public partial class StoreDbContext : DbContext
                 .HasColumnName("pk_purchase");
             entity.Property(e => e.DatePurchase).HasColumnName("date_purchase");
             entity.Property(e => e.FkAddressShipment).HasColumnName("fk_address_shipment");
+            entity.Property(e => e.FkCard).HasColumnName("fk_card");
             entity.Property(e => e.FkInvoice).HasColumnName("fk_invoice");
             entity.Property(e => e.FkReview).HasColumnName("fk_review");
             entity.Property(e => e.FkUser)
@@ -271,6 +302,10 @@ public partial class StoreDbContext : DbContext
             entity.HasOne(d => d.FkAddressShipmentNavigation).WithMany(p => p.Purchases)
                 .HasForeignKey(d => d.FkAddressShipment)
                 .HasConstraintName("FK_Purchase_Address");
+
+            entity.HasOne(d => d.FkCardNavigation).WithMany(p => p.Purchases)
+                .HasForeignKey(d => d.FkCard)
+                .HasConstraintName("FK_Purchase_card");
 
             entity.HasOne(d => d.FkInvoiceNavigation).WithMany(p => p.Purchases)
                 .HasForeignKey(d => d.FkInvoice)
@@ -290,7 +325,6 @@ public partial class StoreDbContext : DbContext
             entity.Property(e => e.FkPurchase).HasColumnName("fk_purchase");
             entity.Property(e => e.FkProduct).HasColumnName("fk_product");
             entity.Property(e => e.FkReview).HasColumnName("fk_review");
-            entity.Property(e => e.FkUser).HasColumnName("fk_user");
             entity.Property(e => e.Price).HasColumnName("price");
             entity.Property(e => e.Qtt).HasColumnName("qtt");
             entity.Property(e => e.Status)
@@ -346,6 +380,20 @@ public partial class StoreDbContext : DbContext
                         j.IndexerProperty<int>("FkReview").HasColumnName("fk_review");
                         j.IndexerProperty<int>("FkImage").HasColumnName("fk_image");
                     });
+        });
+
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.HasKey(e => e.PkUser);
+
+            entity.ToTable("User");
+
+            entity.Property(e => e.PkUser)
+                .ValueGeneratedNever()
+                .HasColumnName("pk_user");
+            entity.Property(e => e.FkUser)
+                .HasMaxLength(500)
+                .HasColumnName("fk_user");
         });
 
         modelBuilder.Entity<UserImage>(entity =>
