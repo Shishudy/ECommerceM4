@@ -90,6 +90,9 @@ public partial class StoreDbContext : DbContext
                 .HasColumnName("pk_campaign");
             entity.Property(e => e.DateEnd).HasColumnName("date_end");
             entity.Property(e => e.DateStart).HasColumnName("date_start");
+            entity.Property(e => e.Name)
+                .HasMaxLength(50)
+                .HasColumnName("name");
 
             entity.HasMany(d => d.FkImages).WithMany(p => p.FkCampaigns)
                 .UsingEntity<Dictionary<string, object>>(
