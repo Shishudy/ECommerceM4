@@ -17,6 +17,8 @@ public partial class Invoice
 
     public string? PaypallConfirmation { get; set; }
 
+    public double? Amount { get; set; }
+
     public virtual Address FkAddressInvoiceNavigation { get; set; } = null!;
 
     public virtual ICollection<Purchase> Purchases { get; set; } = new List<Purchase>();
