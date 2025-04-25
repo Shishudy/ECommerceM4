@@ -21,15 +21,11 @@ public partial class Product
 
     public bool Toggle { get; set; }
 
-    public virtual ICollection<CartProdut> CartProduts { get; set; } = new List<CartProdut>();
-
-    public virtual ICollection<Favourite> Favourites { get; set; } = new List<Favourite>();
+    public virtual ICollection<CampaignProduct> CampaignProducts { get; set; } = new List<CampaignProduct>();
 
     public virtual Image FkImageNavigation { get; set; } = null!;
 
     public virtual ICollection<PurchaseProduct> PurchaseProducts { get; set; } = new List<PurchaseProduct>();
-
-    public virtual ICollection<Campaign> FkCampaigns { get; set; } = new List<Campaign>();
 
     public virtual ICollection<Category> FkCategories { get; set; } = new List<Category>();
 }

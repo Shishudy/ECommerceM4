@@ -7,7 +7,7 @@ public partial class Purchase
 {
     public int PkPurchase { get; set; }
 
-    public int FkUser { get; set; }
+    public string FkUser { get; set; } = null!;
 
     public int? FkInvoice { get; set; }
 
@@ -18,10 +18,6 @@ public partial class Purchase
     public string Status { get; set; } = null!;
 
     public int? FkAddressShipment { get; set; }
-
-    public virtual ICollection<CartHistory> CartHistories { get; set; } = new List<CartHistory>();
-
-    public virtual ICollection<Cart> Carts { get; set; } = new List<Cart>();
 
     public virtual Address? FkAddressShipmentNavigation { get; set; }
 
