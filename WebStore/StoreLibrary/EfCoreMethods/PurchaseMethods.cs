@@ -124,6 +124,26 @@ namespace StoreLibrary.EfCoreMethods
 				_context.SaveChanges();
 			}
 		}
+		
+		public void DeleteCardById (int cardId)
+		{
+			var card = _context.Cards.FirstOrDefault(c => c.PkCard == cardId);
+			if (card != null)
+			{
+				card.Toogle = true; // Soft delete
+				_context.SaveChanges();
+			}
+		}
+
+		public void DeleteAddressById (int addressId)
+		{
+			var address = _context.Addresses.FirstOrDefault(a => a.PkAddress == addressId);
+			if (address != null)
+			{
+				address.Toggle = true; // Soft delete
+				_context.SaveChanges();
+			}
+		}
 
 		public void AddCardToPurchase(string fk_user, Card card)
 		{
@@ -131,7 +151,7 @@ namespace StoreLibrary.EfCoreMethods
 			var cart = GetCartByUserID(fk_user);
 			// Check if the card is already in the purchase
 			var existingCard = _context.Cards
-				.FirstOrDefault(c => c.FkPurchase == cart.PkPurchase && c.CardNumber == card.CardNumber);
+				.FirstOrDefault(c => c.PkCard == cart.FkCard);
 			if (existingCard != null)
 			{
 				// If the card is already in the purchase, update the card details
@@ -158,7 +178,7 @@ namespace StoreLibrary.EfCoreMethods
 			var cart = GetCartByUserID(fk_user);
 			// Check if the address is already in the purchase
 			var existingAddress = _context.Addresses
-				.FirstOrDefault(a => a.FkPurchase == cart.PkPurchase && a.Street == address.Street);
+				.FirstOrDefault(a => a.PkAddress == cart.FkAddressShipment);
 			if (existingAddress != null)
 			{
 				// If the address is already in the purchase, update the address details
@@ -185,7 +205,7 @@ namespace StoreLibrary.EfCoreMethods
 			var cart = GetCartByUserID(fk_user);
 			// Check if the invoice is already in the purchase
 			var existingInvoice = _context.Invoices
-				.FirstOrDefault(i => i.FkPurchase == cart.PkPurchase && i.InvoiceNumber == invoice.InvoiceNumber);
+				.FirstOrDefault(i => i.PkInvoice == cart.FkInvoice);
 			if (existingInvoice != null)
 			{
 				// If the invoice is already in the purchase, update the invoice details
@@ -197,17 +217,17 @@ namespace StoreLibrary.EfCoreMethods
 				existingInvoice.TotalAmount = invoice.TotalAmount;
 
 					// Check if the address is already associated with the invoice
-				if (existingInvoice.FkAddress == null)
+				if (existingInvoice.FkAddressInvoice == null)
 				{
 					// Add the address and associate it with the invoice
 					_context.Addresses.Add(address);
 					_context.SaveChanges(); // Save to get the generated PkAddress
-					existingInvoice.FkAddress = address.PkAddress;
+					existingInvoice.FkAddressInvoice = address.PkAddress;
 				}
 				else
 				{
 					// Update the existing address
-					var existingAddress = _context.Addresses.FirstOrDefault(a => a.PkAddress == existingInvoice.FkAddress);
+					var existingAddress = _context.Addresses.FirstOrDefault(a => a.PkAddress == existingInvoice.FkAddressInvoice);
 					if (existingAddress != null)
 					{
 						existingAddress.Street = address.Street;
