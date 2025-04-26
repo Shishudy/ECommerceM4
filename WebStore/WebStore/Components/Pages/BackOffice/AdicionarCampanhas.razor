@@ -40,30 +40,21 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Console.WriteLine("⚙️ OnInitializedAsync chamado.");
-        var campanhas = await CampaignService.GetAllCampaignsAsync();
-        var ativa = campanhas.FirstOrDefault(c => c.DateEnd >= DateOnly.FromDateTime(DateTime.Today));
-        if (ativa != null)
+        var campaigns = await CampaignService.GetAllCampaignsAsync();
+        var activeCampaign = campaigns.FirstOrDefault(c => c.DateEnd >= DateOnly.FromDateTime(DateTime.Today));
+        if (activeCampaign != null)
         {
-            Console.WriteLine($"📌 Campanha ativa encontrada: {ativa.Name} (ID: {ativa.PkCampaign})");
-            createdCampaignId = ativa.PkCampaign;
-            campaignName = ativa.Name;
-            startDate = ativa.DateStart.ToDateTime(TimeOnly.MinValue);
-            endDate = ativa.DateEnd.ToDateTime(TimeOnly.MinValue);
-        }
-        else
-        {
-            Console.WriteLine("⚠️ Nenhuma campanha ativa encontrada.");
+            createdCampaignId = activeCampaign.PkCampaign;
+            campaignName = activeCampaign.Name;
+            startDate = activeCampaign.DateStart.ToDateTime(TimeOnly.MinValue);
+            endDate = activeCampaign.DateEnd.ToDateTime(TimeOnly.MinValue);
         }
     }
 
     private async Task SaveCampaignAsync()
     {
-        Console.WriteLine("💾 Botão 'Save Campaign' clicado.");
-
         if (string.IsNullOrWhiteSpace(campaignName) || !startDate.HasValue || !endDate.HasValue)
         {
-            Console.WriteLine("❌ Campos obrigatórios estão vazios.");
             await JS.InvokeVoidAsync("alert", "Please fill in all fields.");
             return;
         }
@@ -75,26 +66,21 @@
                 DateEnd = DateOnly.FromDateTime(endDate.Value)
             };
 
-        Console.WriteLine($"📤 Enviando campanha: {dto.Name}, {dto.DateStart} - {dto.DateEnd}");
         var result = await CampaignService.CreateCampaignAsync(dto);
-        Console.WriteLine($"🔁 Resultado da criação: {result}");
 
         if (!string.IsNullOrEmpty(result) && result != "0")
         {
             createdCampaignId = int.Parse(result);
-            Console.WriteLine($"✅ Campanha criada com ID: {createdCampaignId}");
             await JS.InvokeVoidAsync("alert", $"Campaign successfully created! ID: {createdCampaignId}");
         }
         else
         {
-            Console.WriteLine("❌ Erro ao criar a campanha.");
             await JS.InvokeVoidAsync("alert", "Error while creating the campaign.");
         }
     }
+
     private async Task OpenAssociateDialog()
     {
-        Console.WriteLine(">> Tentando abrir AssociateProductDialog");
-
         var result = await DialogService.OpenAsync<AssociateProductDialog>(
             "Associate Products",
             new Dictionary<string, object> { { "CampaignId", createdCampaignId } },
@@ -103,7 +89,7 @@
 
         if (result is bool success && success)
         {
-            await JS.InvokeVoidAsync("alert", "Produtos associados com sucesso!");
+            await JS.InvokeVoidAsync("alert", "Products successfully associated!");
         }
     }
 }
