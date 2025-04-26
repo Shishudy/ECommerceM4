@@ -18,14 +18,14 @@ namespace StoreAPI.Controllers
 			_context = context;
 		}
 
-		// POST: api/favourites/5
+		// POST: api/favourites/toggle/5
 		[HttpPost("toggle/{productId}")]
 		public async Task<ActionResult<bool>> UpdateFavourites(int productId)
 		{
 			var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
 			if (string.IsNullOrEmpty(userId))
-				return Unauthorized();
+				return Unauthorized("User not signed in!");
 
 			var favourite = await _context.Favourites.FirstOrDefaultAsync(f => f.FkUser == userId && f.FkProduct == productId);
 

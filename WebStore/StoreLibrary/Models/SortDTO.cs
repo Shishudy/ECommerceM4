@@ -15,7 +15,7 @@ namespace StoreLibrary.Models
 		InStock
 	}
 
-	public class Sort
+	public class SortDTO
 	{
 		public SortOption SortBy { get; set; }
 	}

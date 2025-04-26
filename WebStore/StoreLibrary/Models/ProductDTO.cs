@@ -7,7 +7,7 @@ using StoreLibrary.DbModels;
 
 namespace StoreLibrary.Models
 {
-	public class ProductPage
+	public class ProductDTO
 	{
 		public int ProductId { get; set; }
 		public string Ean { get; set; } = null!;
@@ -15,10 +15,9 @@ namespace StoreLibrary.Models
 		public string Category { get; set; } = null!;
 		public string Description { get; set; } = null!;
 		public double Price { get; set; }
-		public double? Discount { get; set; }
-		public bool IsFavorite { get; set; }
+		public double Discount { get; set; }
 		public bool InStock { get; set; }
-		public List<Image> ImageList { get; set; } = new List<Image>();
-		public List<Review> ReviewList { get; set; } = new List<Review>();
+		public bool IsFavorite { get; set; } = false;
+		public string ImageUrl { get; set; } = null!;
 	}
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace StoreLibrary.Models
 {
-	public class Filter
+	public class FilterDTO
 	{
 		public int? MinPrice { get; set; }
 		public int? MaxPrice { get; set; }
