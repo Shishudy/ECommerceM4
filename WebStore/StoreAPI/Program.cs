@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using StoreAPI.Data;
+using StoreAPI.Areas.Identity.Data;
 using StoreLibrary.DbModels;
 
 
@@ -15,16 +15,16 @@ namespace StoreAPI
 		{
 			var builder = WebApplication.CreateBuilder(args);
 
-			// Connection Strings
+			// Read Connection Strings from appsettings.json
 			var identityConn = builder.Configuration.GetConnectionString("IdentityContextConnection")
 							   ?? throw new InvalidOperationException("Missing Identity connection string.");
 
-			var storedbConnectionString = builder.Configuration.GetConnectionString("StoreDBConnection")
-				?? throw new InvalidOperationException("Connection string 'StoreDBConnection' not found.");
+			var storedbConn = builder.Configuration.GetConnectionString("StoreDBConnection") ?? throw new InvalidOperationException("Connection string 'StoreDBConnection' not found.");
 
-			// Identity DB
-			builder.Services.AddDbContext<IdentityContext>(options =>
-				options.UseSqlServer(identityConn));
+			//Add DB contexts to services
+			builder.Services.AddDbContext<StoreDbContext>(options => options.UseSqlServer(storedbConn));
+
+			builder.Services.AddDbContext<IdentityContext>(options => options.UseSqlServer(identityConn));
 
 			builder.Services.AddIdentity<IdentityUser, IdentityRole>()
 				.AddEntityFrameworkStores<IdentityContext>()
