@@ -31,7 +31,7 @@ namespace StoreAPI
 				.AddDefaultTokenProviders();
 
 			builder.Services.AddDbContext<StoreDbContext>(options =>
-				options.UseSqlServer(storedbConnectionString));
+				options.UseSqlServer(storedbConn));
 
 			// CORS
 			builder.Services.AddCors(options =>
