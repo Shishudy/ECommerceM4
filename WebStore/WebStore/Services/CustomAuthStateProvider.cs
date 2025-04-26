@@ -6,7 +6,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using WebStore.Components.Pages.FrontOffice;
 
-namespace WebStore.Services.CostumeAuthStateProvider
+namespace WebStore.Services
 {
 	public class CustomAuthStateProvider : AuthenticationStateProvider
 	{

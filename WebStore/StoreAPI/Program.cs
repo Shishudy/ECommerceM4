@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using StoreAPI.Areas.Identity.Data;
 using StoreLibrary.DbModels;
 
+
 namespace StoreAPI
 {
 	public class Program
@@ -28,6 +29,9 @@ namespace StoreAPI
 			builder.Services.AddIdentity<IdentityUser, IdentityRole>()
 				.AddEntityFrameworkStores<IdentityContext>()
 				.AddDefaultTokenProviders();
+
+			builder.Services.AddDbContext<StoreDbContext>(options =>
+				options.UseSqlServer(storedbConnectionString));
 
 			// CORS
 			builder.Services.AddCors(options =>

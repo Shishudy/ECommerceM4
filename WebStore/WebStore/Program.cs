@@ -4,8 +4,7 @@ using Radzen;
 using WebStore;
 using WebStore.Services;
 using WebStore.Components;
-using WebStore.Services.AuthService;
-using WebStore.Services.CostumeAuthStateProvider;
+using WebStore.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +17,7 @@ builder.Services.AddScoped<DialogService>();
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<TooltipService>();
 builder.Services.AddScoped<ContextMenuService>();
+
 
 
 // HTTP Client para API
@@ -33,6 +33,8 @@ builder.Services.AddScoped<ProtectedLocalStorage>();
 
 // Auth Service
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<CampaignService>();
+builder.Services.AddScoped<ProductService>();
 
 // Services
 builder.Services.AddScoped<ProductService>();

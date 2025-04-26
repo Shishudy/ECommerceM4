@@ -1,8 +1,8 @@
-﻿using WebStore.Services.CostumeAuthStateProvider;
-using WebStore.Models.Auth;
+﻿using WebStore.Services;
+using StoreLibrary.DTOs.Auth;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
-namespace WebStore.Services.AuthService
+namespace WebStore.Services
 {
 	public class AuthService
 	{
