@@ -14,6 +14,11 @@
 
   <ItemGroup>
     <Folder Include="Components\Pages\FrontOffice\Purchase\" />
+    <Folder Include="wwwroot\Images\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\StoreLibrary\StoreLibrary.csproj" />
   </ItemGroup>
 
 </Project>
