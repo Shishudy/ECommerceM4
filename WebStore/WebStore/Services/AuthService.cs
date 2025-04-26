@@ -41,9 +41,8 @@ namespace WebStore.Services.AuthService
 
 			if (response.IsSuccessStatusCode)
 			{
-
-			}
 				return "success";
+			}
 			var content = await response.Content.ReadFromJsonAsync<List<IdentityError>>();
 
 			if (content != null)
