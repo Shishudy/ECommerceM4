@@ -20,25 +20,33 @@ namespace WebStore.Services
 			_http = factory.CreateClient("API");
 		}
 
-		public async Task<List<ProductDTO>> GetProductsListAsync(FilterDTO filter, string? category = null)
+		public async Task<List<ProductDTO>> GetProductsListAsync(FilterDTO? filter = null, string? category = null, string? search = null)
 		{
 			string url = "api/products/category";
 
-			if (category != null)
-				url = url + $"/{category}";
+			if (category != null && search == null)
+				url += $"/{category}";
 
 			var queryParams = new List<string>();
 
-			if (filter.MinPrice != null)
-				queryParams.Add($"minPrice={filter.MinPrice.Value}");
+			if (search != null)
+				queryParams.Add($"search={search}");
+			else
+			{
+				if (filter != null)
+				{
+					if (filter.MinPrice != null)
+						queryParams.Add($"minPrice={filter.MinPrice}");
 
-			if (filter.MaxPrice != null)
-				queryParams.Add($"maxPrice={filter.MaxPrice.Value}");
+					if (filter.MaxPrice != null)
+						queryParams.Add($"maxPrice={filter.MaxPrice}");
 
-			if (filter.InStock != null)
-				queryParams.Add($"inStock={filter.InStock.Value.ToString().ToLower()}");
+					if (filter.InStock != null)
+						queryParams.Add($"inStock={filter.InStock.Value.ToString().ToLower()}");
+				}
+			}
 
-			if (queryParams.Any())
+			if (queryParams.Count > 0)
 			{
 				url += "?" + string.Join("&", queryParams);
 			}

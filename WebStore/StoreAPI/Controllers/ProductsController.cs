@@ -22,7 +22,7 @@ namespace StoreAPI.Controllers
 
 		// GET: api/products/category/tecnologia
 		[HttpGet("category/{category?}")]
-		public async Task<ActionResult<List<ProductDTO>>> GetProductDtoList(string? category, [FromQuery] FilterDTO filter)
+		public async Task<ActionResult<List<ProductDTO>>> GetProductDtoList(string? category, [FromQuery] FilterDTO? filter, [FromQuery] string? search = null)
 		{
 			var query = _context.Products
 				.Where(p => p.Toggle == true)
@@ -30,12 +30,32 @@ namespace StoreAPI.Controllers
 				.Include(p => p.FkImageNavigation)
 				.AsQueryable();
 
-			query = query
-				.Where(p => string.IsNullOrEmpty(category) ||
-							p.FkCategories.Any(c => c.Name.Equals(category, StringComparison.OrdinalIgnoreCase)))
-				.Where(p => !filter.MinPrice.HasValue || p.Price >= filter.MinPrice.Value)
-				.Where(p => !filter.MaxPrice.HasValue || p.Price <= filter.MaxPrice.Value)
-				.Where(p => !filter.InStock.HasValue || (filter.InStock.Value && p.Stock > 0));
+			if (search != null)
+			{
+				query = query.Where(p =>
+					p.Name.Contains(search) ||
+					p.Description.Contains(search) ||
+					p.Ean.Contains(search));
+			}
+			else
+			{
+				if (category != null)
+				{
+					query = query.Where(p => p.FkCategories.Any(c => c.Name.Equals(category, StringComparison.OrdinalIgnoreCase)));
+
+				}
+				if (filter != null)
+				{
+					if (filter.MinPrice != null)
+						query = query.Where(p => p.Price >= filter.MinPrice.Value);
+					if (filter.MaxPrice != null)
+						query = query.Where(p => p.Price >= filter.MaxPrice.Value);
+					if (filter.InStock == true)
+						query = query.Where(p => p.Stock > 0);
+					else if (filter.InStock == false)
+						query = query.Where(p => (p.Stock == 0));
+				}
+			}
 
 			DateOnly today = DateOnly.FromDateTime(DateTime.UtcNow);
 
