@@ -8,6 +8,4 @@ public partial class Favourite
     public int FkProduct { get; set; }
 
     public string FkUser { get; set; } = null!;
-
-    public virtual Product FkProductNavigation { get; set; } = null!;
 }
