@@ -1,0 +1,52 @@
+﻿@page "/products/product/{Ean}"
+@inject ProductService ProductService
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+
+@if (ThisProduct == null)
+{
+	<p>A carregar produto...</p>
+}
+else
+{
+	<div>
+		<h1>@ThisProduct.Name</h1>
+		<p>@ThisProduct.Description</p>
+		<p>Preço: $@ThisProduct.Price</p>
+		<p>Em stock: @(ThisProduct.InStock ? "Yes" : "No")</p>
+	</div>
+}
+
+<style>
+	.filled-icon {
+		font-variation-settings: 'FILL' 1;
+	}
+</style>
+
+@code {
+	[Parameter]
+	public string Ean { get; set; }
+
+	public ProductPageDTO ThisProduct;
+
+	protected override async Task OnInitializedAsync()
+	{
+		ThisProduct = await ProductService.GetProductAsync(Ean);
+		ThisProduct = new ProductPageDTO
+			{
+				ProductId = 1,
+				Ean = "1234567890123",
+				Name = "Cat Food Deluxe",
+				Description = "Premium cat food for all breeds.",
+				Price = 29.99,
+				Discount = 5.0,
+				InStock = true,
+				IsFavorite = false,
+				ImageUrl = "/images/products/catfood-deluxe.jpg",
+				Category = "Pet Food",
+				ImagePathList = null,
+				ReviewList = null
+			};
+	}
+}

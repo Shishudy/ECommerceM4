@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Radzen;
 using WebStore;
+using WebStore.Services;
 using WebStore.Components;
 using WebStore.Services;
 
@@ -29,12 +30,14 @@ builder.Services.AddHttpClient("API", client =>
 builder.Services.AddScoped<CustomAuthStateProvider>();
 builder.Services.AddScoped<AuthenticationStateProvider>(provider => provider.GetRequiredService<CustomAuthStateProvider>());
 builder.Services.AddScoped<ProtectedLocalStorage>();
-// Services
+
+// Auth Service
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<CampaignService>();
 builder.Services.AddScoped<ProductService>();
 
-
+// Services
+builder.Services.AddScoped<ProductService>();
 
 var app = builder.Build();
 
