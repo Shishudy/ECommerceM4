@@ -180,11 +180,6 @@ public partial class StoreDbContext : DbContext
             entity.Property(e => e.FkUser)
                 .HasMaxLength(500)
                 .HasColumnName("fk_user");
-
-            entity.HasOne(d => d.FkProductNavigation).WithMany()
-                .HasForeignKey(d => d.FkProduct)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Favourite_Product");
         });
 
         modelBuilder.Entity<Image>(entity =>
