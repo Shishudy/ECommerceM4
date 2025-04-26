@@ -19,7 +19,11 @@ public partial class Purchase
 
     public int? FkAddressShipment { get; set; }
 
+    public int? FkCard { get; set; }
+
     public virtual Address? FkAddressShipmentNavigation { get; set; }
+
+    public virtual Card? FkCardNavigation { get; set; }
 
     public virtual Invoice? FkInvoiceNavigation { get; set; }
 

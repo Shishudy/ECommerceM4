@@ -19,6 +19,8 @@ public partial class Address
 
     public string? Name { get; set; }
 
+    public bool? Toggle { get; set; }
+
     public virtual ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
 
     public virtual ICollection<Purchase> Purchases { get; set; } = new List<Purchase>();
