@@ -1,8 +1,157 @@
 ﻿@page "/"
+@inject NotificationService NotificationService;
+@inject NavigationManager Navigation
+@inject ProductService ProductService
+@rendermode InteractiveServer
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<RadzenStack class="rz-p-0 rz-p-md-12">
+	<RadzenCarousel @ref=carousel @bind-SelectedIndex="@selectedIndex" Auto="false" AllowPaging="true"
+	Style="height: 400px;" PagerPosition="PagerPosition.Bottom" PagerOverlay="true">
+		<Items>
+			<RadzenCarouselItem>
+				<RadzenImage Path="https://diamondpet.storage.googleapis.com/wp-content/uploads/2021/03/22094728/kitten-sitting-on-floor-031621.jpg" class="rz-w-100" />
+			</RadzenCarouselItem>
+			<RadzenCarouselItem>
+				<RadzenImage Path="https://diamondpet.storage.googleapis.com/wp-content/uploads/2021/03/22094728/kitten-sitting-on-floor-031621.jpg" class="rz-w-100" />
+			</RadzenCarouselItem>
+		</Items>
+	</RadzenCarousel>
+</RadzenStack>
 
-Welcome to your new app.
+<div id = "ControlRegion">
+	<div class="product_list">
+		@if (ProductList == null)
+		{
+			<p>A carregar...</p>
+		}
+		else
+		{
+			<RadzenStack>
+				<RadzenCardGroup Responsive="@responsive">
+					@foreach (ProductDTO product in ProductList)
+					{
+						<RadzenCard class="rz-my-12 rz-mx-auto" Style="max-width: 420px">
+							<div @onclick="@(() => GoToProductPage(product.Ean))" style="cursor: pointer;">
+								<RadzenStack Orientation="Orientation.Vertical" JustifyContent="JustifyContent.Start" Gap="1rem" class="rz-p-4">
+									<RadzenImage Path="https://diamondpet.storage.googleapis.com/wp-content/uploads/2021/03/22094728/kitten-sitting-on-floor-031621.jpg"
+												 Style="width: 100px; height: 100px; border-radius: 10%;" />
+									<RadzenStack Gap="0">
+										<RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-2 rz-my-0">@product.Name</RadzenText>
+										<RadzenText TextStyle="TextStyle.Body1"><b>@product.Description</b></RadzenText>
+										<RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0">@product.Ean</RadzenText>
+										<RadzenText TextStyle="TextStyle.Body1"><b>@(product.InStock ? "Em stock!" : "Sem stock!")</b></RadzenText>
+									</RadzenStack>
+								</RadzenStack>
+							</div>
+							<RadzenStack Orientation="Orientation.Vertical" JustifyContent="JustifyContent.End" Gap="0" class="rz-p-0 rz-p-md-6 rz-p-lg-12">
+								<RadzenButton Click="@(() => ToggleFavorite(product))" @onclick:stopPropagation>
+									<RadzenIcon Icon="favorite"
+												class=@(product.IsFavorite ? "filled-icon" : "")
+												IconColor="@Colors.Warning" />
+								</RadzenButton>
+								<RadzenButton Click="AddToCart" @onclick:stopPropagation>
+									<RadzenIcon Icon="shopping_cart" IconColor="@Colors.White" />
+								</RadzenButton>
+							</RadzenStack>
+						</RadzenCard>
+					}
+				</RadzenCardGroup>
+			</RadzenStack>
+		}
+	</div>
+</div>
 
+<style>
+	.filled-icon {
+	font-variation-settings: 'FILL' 1;
+	}
+</style>
+
+@code {
+
+	public List<ProductDTO> ProductList;
+
+	public FilterDTO ProductFilter;
+
+	public SortDTO Sort;
+
+	RadzenCarousel carousel;
+
+	int selectedIndex;
+
+	bool responsive = true;
+
+	protected override async Task OnInitializedAsync()
+	{
+		ProductFilter = new FilterDTO {
+				MinPrice = null,
+				MaxPrice = null,
+				InStock = null
+			};
+		ProductList = await ProductService.GetProductsListAsync(ProductFilter, null);
+		ProductList = new List<ProductDTO>
+		{
+			new ProductDTO
+			{
+				ProductId = 1,
+				Ean = "1234567890123",
+				Name = "Cat Food Deluxe",
+				Description = "Premium cat food for all breeds.",
+				Price = 29.99,
+				Discount = 5.0,
+				InStock = true,
+				IsFavorite = false,
+				ImageUrl = "/images/products/catfood-deluxe.jpg",
+				Category = "Pet Food"
+			},
+			new ProductDTO
+			{
+				ProductId = 2,
+				Ean = "9876543210987",
+				Name = "Dog Toy Ball",
+				Description = "Bouncy toy ball for playful dogs.",
+				Price = 9.99,
+				Discount = 0,
+				InStock = true,
+				IsFavorite = true,
+				ImageUrl = "/images/products/dogtoy-ball.jpg",
+				Category = "Pet Toys"
+			},
+			new ProductDTO
+			{
+				ProductId = 3,
+				Ean = "1111222233334",
+				Name = "Bird Cage",
+				Description = "Spacious and safe bird cage.",
+				Price = 99.99,
+				Discount = 10.0,
+				InStock = false,
+				IsFavorite = false,
+				ImageUrl = "/images/products/birdcage.jpg",
+				Category = "Pet Accessories"
+			}
+		};
+	}
+
+	private void GoToProductPage(string ean)
+	{
+		Navigation.NavigateTo($"/products/product/{ean}");
+	}
+
+	private async Task AddToCart()
+	{
+		return;
+	}
+
+	private async void ToggleFavorite(ProductDTO product)
+	{
+		string response = await ProductService.UpdateFavourite(product.ProductId);
+
+		if (product.IsFavorite == true)
+			product.IsFavorite = false;
+		else
+			product.IsFavorite = true;
+	}
+}
