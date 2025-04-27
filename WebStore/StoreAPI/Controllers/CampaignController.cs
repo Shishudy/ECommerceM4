@@ -115,30 +115,5 @@ namespace StoreAPI.Controllers
 				return BadRequest("No products were associated. They might already be in the selected campaign or in another active campaign.");
 			}
 		}
-
-		[HttpGet("/api/product")]
-		public async Task<IActionResult> GetAllProducts()
-		{
-			var products = await _context.Products
-				.Include(p => p.FkCategories) 
-				.Select(p => new ProductDTO
-				{
-					ProductId = p.PkProduct,
-					Ean = p.Ean,
-					Name = p.Name,
-					Description = p.Description,
-					Price = p.Price,
-					Discount = 0, 
-					InStock = p.Stock > 0,
-					IsFavorite = false, 
-					ImageUrl = p.FkImage.ToString(), 
-					Category = p.FkCategories.FirstOrDefault() != null ? p.FkCategories.First().Name : "Uncategorized"
-				})
-				.ToListAsync();
-
-			return Ok(products);
-		}
-
-
 	}
 }
