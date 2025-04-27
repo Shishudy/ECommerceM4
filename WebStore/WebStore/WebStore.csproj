@@ -12,6 +12,8 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.8.0" />
   </ItemGroup>
 
+<<<<<<< HEAD
+=======
   <ItemGroup>
     <Folder Include="Components\Pages\FrontOffice\Purchase\" />
     <Folder Include="wwwroot\Images\" />
@@ -21,4 +23,5 @@
     <ProjectReference Include="..\StoreLibrary\StoreLibrary.csproj" />
   </ItemGroup>
 
+>>>>>>> dev
 </Project>

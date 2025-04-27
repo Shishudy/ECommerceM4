@@ -32,7 +32,7 @@ else
 
 	protected override async Task OnInitializedAsync()
 	{
-		ThisProduct = await ProductService.GetProductAsync(Ean);
+		ThisProduct = await ProductService.GetProductPageDtoAsync(Ean);
 		ThisProduct = new ProductPageDTO
 			{
 				ProductId = 1,

@@ -7,7 +7,7 @@ public partial class Invoice
 {
     public int PkInvoice { get; set; }
 
-    public int FkAddressInvoice { get; set; }
+    public int? FkAddressInvoice { get; set; }
 
     public string Name { get; set; } = null!;
 

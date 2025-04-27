@@ -18,8 +18,6 @@ builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<TooltipService>();
 builder.Services.AddScoped<ContextMenuService>();
 
-
-
 // HTTP Client para API
 builder.Services.AddHttpClient("API", client =>
 {
@@ -27,17 +25,16 @@ builder.Services.AddHttpClient("API", client =>
 });
 
 // Custom Auth Provider
+builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<CustomAuthStateProvider>();
 builder.Services.AddScoped<AuthenticationStateProvider>(provider => provider.GetRequiredService<CustomAuthStateProvider>());
 builder.Services.AddScoped<ProtectedLocalStorage>();
 
-// Auth Service
-builder.Services.AddScoped<AuthService>();
+// Services
 builder.Services.AddScoped<CampaignService>();
 builder.Services.AddScoped<ProductService>();
-
-// Services
-builder.Services.AddScoped<ProductService>();
+builder.Services.AddScoped<FavouriteService>();
+builder.Services.AddScoped<CategoryService>();
 
 var app = builder.Build();
 

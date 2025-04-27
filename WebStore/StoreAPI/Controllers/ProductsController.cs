@@ -135,7 +135,7 @@ namespace StoreAPI.Controllers
 						.OrderBy(c => c.PkCategory)
 						.Select(c => c.Name)
 						.FirstOrDefault() ?? string.Empty,
-					IsFavorite = false, // Will be updated later
+					IsFavorite = false,
 					ImagePathList = new List<string>
 					{
 						p.FkImageNavigation.PathImg

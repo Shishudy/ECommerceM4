@@ -18,9 +18,8 @@ namespace StoreAPI.Controllers
 			_context = context;
 		}
 
-		// POST: api/favourites/toggle/5
-		[HttpPost("toggle/{productId}")]
-		public async Task<ActionResult<bool>> UpdateFavourites(int productId)
+		[HttpPost("{productId}")]
+		public async Task<ActionResult<string>> UpdateFavourites(int productId)
 		{
 			var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
@@ -29,18 +28,32 @@ namespace StoreAPI.Controllers
 
 			var favourite = await _context.Favourites.FirstOrDefaultAsync(f => f.FkUser == userId && f.FkProduct == productId);
 
+			string msg;
+
 			if (favourite == null)
 			{
-				favourite = new Favourite { FkProduct = productId, FkUser = userId };
+				favourite = new Favourite
+				{
+					FkProduct = productId,
+					FkUser = userId
+				};
 				_context.Favourites.Add(favourite);
-				await _context.SaveChangesAsync();
-				return Ok("Product added to favourites!");
+				msg = "Produto adicionado aos favoritos!";
 			}
 			else
 			{
 				_context.Favourites.Remove(favourite);
+				msg = "Produto removido dos favoritos!";
+			}
+
+			try
+			{
 				await _context.SaveChangesAsync();
-				return Ok("Product removed from favourites!");
+				return Ok(msg);
+			}
+			catch (Exception)
+			{
+				return StatusCode(500, "Error ao atualizar favoritos.");
 			}
 		}
 	}
