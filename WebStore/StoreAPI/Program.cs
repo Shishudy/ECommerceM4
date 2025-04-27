@@ -70,6 +70,9 @@ namespace StoreAPI
 
 			var app = builder.Build();
 
+			// Add custom exception middleware
+			app.UseMiddleware<ExceptionMiddleware>();
+
 			app.UseCors("AllowAll");
 
 			if (app.Environment.IsDevelopment())
