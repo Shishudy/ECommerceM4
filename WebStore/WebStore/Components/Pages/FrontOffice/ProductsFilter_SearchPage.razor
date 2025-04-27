@@ -70,54 +70,12 @@
 	protected override async Task OnInitializedAsync()
 	{
 		ProductFilter = new FilterDTO
-			{
-				MinPrice = null,
-				MaxPrice = null,
-				InStock = null
-			};
-		ProductList = await ProductService.GetProductDtoListAsync(ProductFilter, null);
-		ProductList = new List<ProductDTO>
 		{
-			new ProductDTO
-			{
-				ProductId = 1,
-				Ean = "1234567890123",
-				Name = "Cat Food Deluxe",
-				Description = "Premium cat food for all breeds.",
-				Price = 29.99,
-				Discount = 5.0,
-				InStock = true,
-				IsFavorite = false,
-				ImageUrl = "/images/products/catfood-deluxe.jpg",
-				Category = "Pet Food"
-			},
-			new ProductDTO
-			{
-				ProductId = 2,
-				Ean = "9876543210987",
-				Name = "Dog Toy Ball",
-				Description = "Bouncy toy ball for playful dogs.",
-				Price = 9.99,
-				Discount = 0,
-				InStock = true,
-				IsFavorite = true,
-				ImageUrl = "/images/products/dogtoy-ball.jpg",
-				Category = "Pet Toys"
-			},
-			new ProductDTO
-			{
-				ProductId = 3,
-				Ean = "1111222233334",
-				Name = "Bird Cage",
-				Description = "Spacious and safe bird cage.",
-				Price = 99.99,
-				Discount = 10.0,
-				InStock = false,
-				IsFavorite = false,
-				ImageUrl = "/images/products/birdcage.jpg",
-				Category = "Pet Accessories"
-			}
+			MinPrice = null,
+			MaxPrice = null,
+			InStock = null
 		};
+		ProductList = await ProductService.GetProductDtoListAsync(ProductFilter, null);
 	}
 
 	private void GoToProductPage(string ean)

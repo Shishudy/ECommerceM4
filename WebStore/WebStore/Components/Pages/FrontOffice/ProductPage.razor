@@ -33,20 +33,5 @@ else
 	protected override async Task OnInitializedAsync()
 	{
 		ThisProduct = await ProductService.GetProductPageDtoAsync(Ean);
-		ThisProduct = new ProductPageDTO
-			{
-				ProductId = 1,
-				Ean = "1234567890123",
-				Name = "Cat Food Deluxe",
-				Description = "Premium cat food for all breeds.",
-				Price = 29.99,
-				Discount = 5.0,
-				InStock = true,
-				IsFavorite = false,
-				ImageUrl = "/images/products/catfood-deluxe.jpg",
-				Category = "Pet Food",
-				ImagePathList = null,
-				ReviewList = null
-			};
 	}
 }
