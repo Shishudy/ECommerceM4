@@ -31,6 +31,7 @@ builder.Services.AddScoped<AuthenticationStateProvider>(provider => provider.Get
 builder.Services.AddScoped<ProtectedLocalStorage>();
 
 // Services
+builder.Services.AddScoped<TokenProvider>();
 builder.Services.AddScoped<CampaignService>();
 builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<FavouriteService>();
