@@ -16,6 +16,6 @@ namespace StoreLibrary.Models
 
 		public string Comment { get; set; } = null!;
 
-		public List<string> ReviewImagesPath { get; set; } = null!;
+		public List<ImageDTO>? ImageDTOList { get; set; } = null!;
 	}
 }
