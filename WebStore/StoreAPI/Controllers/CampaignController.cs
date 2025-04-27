@@ -2,7 +2,8 @@
 using StoreLibrary.DbModels;
 using Microsoft.EntityFrameworkCore;
 using StoreLibrary.DTOs.Campaigns;
-using StoreLibrary.DTOs.Product;
+using StoreLibrary.DbModels;
+using StoreLibrary.Models;
 
 namespace StoreAPI.Controllers
 {
@@ -124,22 +125,20 @@ namespace StoreAPI.Controllers
 			var products = await _context.Products
 				.Include(p => p.FkCategories)
 				.Include(p => p.FkImageNavigation)
-				.Select(p => new ProductListDTO
+				.Select(p => new ProductDTO
 				{
-					PkProduct = p.PkProduct,
+					ProductId = p.PkProduct,
 					Name = p.Name,
 					Ean = p.Ean,
+					Description = p.Description,
+					Price = p.Price,
 					ImageUrl = p.FkImageNavigation.PathImg,
-					Categories = p.FkCategories
-						.Select(c => new ProductCategoryDTO
-						{
-							CategoryId = c.PkCategory,
-							Name = c.Name
-						}).ToList()
+					Category = p.FkCategories.FirstOrDefault() != null ? p.FkCategories.FirstOrDefault()!.Name : "Uncategorized"
 				})
 				.ToListAsync();
 
 			return Ok(products);
 		}
+
 	}
 }
