@@ -23,9 +23,9 @@ public partial class Product
 
     public virtual ICollection<CampaignProduct> CampaignProducts { get; set; } = new List<CampaignProduct>();
 
-    public virtual Image FkImageNavigation { get; set; } = null!;
-
     public virtual ICollection<PurchaseProduct> PurchaseProducts { get; set; } = new List<PurchaseProduct>();
 
     public virtual ICollection<Category> FkCategories { get; set; } = new List<Category>();
+
+    public virtual ICollection<Image> FkImages { get; set; } = new List<Image>();
 }

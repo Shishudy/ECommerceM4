@@ -7,7 +7,7 @@ namespace StoreLibrary.DbModels
     public partial class DTOInvoice
     {
         public int PkInvoice { get; set; }
-        public int? FkAddressInvoice { get; set; }
+        public int FkAddressInvoice { get; set; }
         public string Name { get; set; } = null!;
         public int Nif { get; set; }
         public DateOnly DateInvoice { get; set; }

@@ -246,11 +246,6 @@ public partial class StoreDbContext : DbContext
             entity.Property(e => e.Stock).HasColumnName("stock");
             entity.Property(e => e.Toggle).HasColumnName("toggle");
 
-            entity.HasOne(d => d.FkImageNavigation).WithMany(p => p.Products)
-                .HasForeignKey(d => d.FkImage)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Product_Image");
-
             entity.HasMany(d => d.FkCategories).WithMany(p => p.FkProducts)
                 .UsingEntity<Dictionary<string, object>>(
                     "ProductCategory",
@@ -268,6 +263,25 @@ public partial class StoreDbContext : DbContext
                         j.ToTable("ProductCategory");
                         j.IndexerProperty<int>("FkProduct").HasColumnName("fk_product");
                         j.IndexerProperty<int>("FkCategory").HasColumnName("fk_category");
+                    });
+
+            entity.HasMany(d => d.FkImages).WithMany(p => p.FkProducts)
+                .UsingEntity<Dictionary<string, object>>(
+                    "ProductImage",
+                    r => r.HasOne<Image>().WithMany()
+                        .HasForeignKey("FkImage")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FK_ProductImage_Image"),
+                    l => l.HasOne<Product>().WithMany()
+                        .HasForeignKey("FkProduct")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FK_ProductImage_Product"),
+                    j =>
+                    {
+                        j.HasKey("FkProduct", "FkImage");
+                        j.ToTable("ProductImage");
+                        j.IndexerProperty<int>("FkProduct").HasColumnName("fk_product");
+                        j.IndexerProperty<int>("FkImage").HasColumnName("fk_image");
                     });
         });
 
