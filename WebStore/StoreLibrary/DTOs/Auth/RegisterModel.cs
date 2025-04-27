@@ -1,4 +1,4 @@
-﻿namespace WebStore.Models.Auth
+﻿namespace StoreLibrary.DTOs.Auth
 {
 	public class RegisterModel
 	{

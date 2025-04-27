@@ -1,8 +1,8 @@
-﻿using WebStore.Services.CostumeAuthStateProvider;
-using WebStore.Models.Auth;
+﻿using WebStore.Services;
+using StoreLibrary.DTOs.Auth;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
-namespace WebStore.Services.AuthService
+namespace WebStore.Services
 {
 	public class AuthService
 	{
@@ -41,9 +41,8 @@ namespace WebStore.Services.AuthService
 
 			if (response.IsSuccessStatusCode)
 			{
-
-			}
 				return "success";
+			}
 			var content = await response.Content.ReadFromJsonAsync<List<IdentityError>>();
 
 			if (content != null)
