@@ -1,27 +1,11 @@
-﻿@page "/"
+﻿@page "/products"
 @inject NotificationService NotificationService;
 @inject NavigationManager Navigation
 @inject ProductService ProductService
 @inject FavouriteService FavouriteService
 @rendermode InteractiveServer
 
-<PageTitle>Home</PageTitle>
-
-<RadzenStack class="rz-p-0 rz-p-md-12">
-	<RadzenCarousel @ref=carousel @bind-SelectedIndex="@selectedIndex" Auto="false" AllowPaging="true"
-	Style="height: 400px;" PagerPosition="PagerPosition.Bottom" PagerOverlay="true">
-		<Items>
-			<RadzenCarouselItem>
-				<RadzenImage Path="https://diamondpet.storage.googleapis.com/wp-content/uploads/2021/03/22094728/kitten-sitting-on-floor-031621.jpg" class="rz-w-100" />
-			</RadzenCarouselItem>
-			<RadzenCarouselItem>
-				<RadzenImage Path="https://diamondpet.storage.googleapis.com/wp-content/uploads/2021/03/22094728/kitten-sitting-on-floor-031621.jpg" class="rz-w-100" />
-			</RadzenCarouselItem>
-		</Items>
-	</RadzenCarousel>
-</RadzenStack>
-
-<div id = "ControlRegion">
+<div id="ControlRegion">
 	<div class="product_list">
 		@if (ProductList == null)
 		{
@@ -66,12 +50,11 @@
 
 <style>
 	.filled-icon {
-	font-variation-settings: 'FILL' 1;
+		font-variation-settings: 'FILL' 1;
 	}
 </style>
 
 @code {
-
 	public List<ProductDTO> ProductList;
 
 	public FilterDTO ProductFilter;
@@ -86,7 +69,8 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		ProductFilter = new FilterDTO {
+		ProductFilter = new FilterDTO
+			{
 				MinPrice = null,
 				MaxPrice = null,
 				InStock = null

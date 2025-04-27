@@ -20,7 +20,7 @@ namespace WebStore.Services
 			_http = factory.CreateClient("API");
 		}
 
-		public async Task<List<ProductDTO>> GetProductsListAsync(FilterDTO? filter = null, string? category = null, string? search = null)
+		public async Task<List<ProductDTO>?> GetProductDtoListAsync(FilterDTO? filter = null, string? category = null, string? search = null)
 		{
 			string url = "api/products/category";
 
@@ -59,7 +59,7 @@ namespace WebStore.Services
 			return null;
 		}
 
-		public async Task<ProductPageDTO> GetProductAsync(string ean)
+		public async Task<ProductPageDTO?> GetProductPageDtoAsync(string ean)
 		{
 			var response = await _http.GetAsync($"api/products/product/{ean}");
 
@@ -68,16 +68,7 @@ namespace WebStore.Services
 
 			return null;
 		}
-
-		public async Task<string> UpdateFavourite(int productId)
-		{
-			var response = await _http.GetAsync($"api/favourites/toggle/{productId}");
-
-			if (response.IsSuccessStatusCode)
-				return await response.Content.ReadFromJsonAsync<string>();
-
-			return "Erro na operação, tente novamente!";
-		}
+		
 
 		//public async Task AddProductAsync(Product product)
 		//{
