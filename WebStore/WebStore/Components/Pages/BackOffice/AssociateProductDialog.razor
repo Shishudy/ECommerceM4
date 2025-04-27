@@ -108,7 +108,7 @@ else
         try
         {
             activeCampaigns = await CampaignService.GetActiveCampaignsAsync() ?? new();
-            products = await ProductService.GetAllProductsAsync() ?? new();
+			products = await ProductService.GetAllProductsAsync() ?? new();
         }
         catch (Exception ex)
         {
