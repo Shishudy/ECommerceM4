@@ -44,7 +44,7 @@ namespace StoreAPI.Controllers
 			if (category == null)
 				return NotFound("Categoria não encontrada!");
 
-			var categoryDto = new CategoryDTO
+			CategoryDTO categoryDto = new CategoryDTO
 			{
 				CategoryId = category.PkCategory,
 				Name = category.Name
@@ -115,7 +115,7 @@ namespace StoreAPI.Controllers
 			}
 			catch (Exception)
 			{
-				return StatusCode(500, "Error inesperado, tente novamente.");
+				return StatusCode(500, "Erro inesperado, tente novamente.");
 			}
 		}
 
@@ -136,7 +136,7 @@ namespace StoreAPI.Controllers
 			}
 			catch (Exception)
 			{
-				return StatusCode(500, "Error inesperado, tente novamente.");
+				return StatusCode(500, "Erro inesperado, tente novamente.");
 			}
 		}
 	}

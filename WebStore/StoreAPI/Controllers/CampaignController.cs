@@ -2,7 +2,6 @@
 using StoreLibrary.DbModels;
 using Microsoft.EntityFrameworkCore;
 using StoreLibrary.DTOs.Campaigns;
-using StoreLibrary.DbModels;
 using StoreLibrary.Models;
 
 namespace StoreAPI.Controllers

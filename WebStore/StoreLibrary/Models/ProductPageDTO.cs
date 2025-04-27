@@ -9,7 +9,7 @@ namespace StoreLibrary.Models
 {
 	public class ProductPageDTO : ProductDTO
 	{
-		public List<string> ImagePathList { get; set; } = new List<string>();
-		public List<ReviewDTO> ReviewList { get; set; } = new List<ReviewDTO>();
+		public List<ImageDTO> ImageDTOList { get; set; } = new List<ImageDTO>();
+		public List<ReviewDTO> ReviewDTOList { get; set; } = new List<ReviewDTO>();
 	}
 }
