@@ -1,4 +1,4 @@
-﻿@page "/"
+@page "/"
 @inject NotificationService NotificationService;
 @inject NavigationManager Navigation
 @inject ProductService ProductService
@@ -8,20 +8,23 @@
 <PageTitle>Home</PageTitle>
 
 <RadzenStack class="rz-p-0 rz-p-md-12">
-	<RadzenCarousel @ref=carousel @bind-SelectedIndex="@selectedIndex" Auto="false" AllowPaging="true"
-	Style="height: 400px;" PagerPosition="PagerPosition.Bottom" PagerOverlay="true">
+	<RadzenCarousel @ref=carousel @bind-SelectedIndex="@selectedIndex" Auto="false" AllowPaging="true" PagerPosition="PagerPosition.Bottom" PagerOverlay="true"> <!--Style="height: 400px;"-->
 		<Items>
 			<RadzenCarouselItem>
-				<RadzenImage Path="https://diamondpet.storage.googleapis.com/wp-content/uploads/2021/03/22094728/kitten-sitting-on-floor-031621.jpg" class="rz-w-100" />
+				<RadzenImage Path="https://media.discordapp.net/attachments/724672491011702854/1078459456737771530/bubuh.gif?ex=680f6763&is=680e15e3&hm=7d9c88356487aaa550575a46fb35549ae78566317ab6de70178497c46cdaa214&" class="rz-w-100" />
 			</RadzenCarouselItem>
 			<RadzenCarouselItem>
-				<RadzenImage Path="https://diamondpet.storage.googleapis.com/wp-content/uploads/2021/03/22094728/kitten-sitting-on-floor-031621.jpg" class="rz-w-100" />
+				<RadzenImage Path="https://media.discordapp.net/attachments/323877565469032448/1184258326289195148/chipi-chipi-chapa-chapa.gif?ex=680f5643&is=680e04c3&hm=f3b69a053e650a0c4ca9b15de643d53f15b06bd719322e15ad0f15665ab760ad&" class="rz-w-100" />
+			</RadzenCarouselItem>
+			<RadzenCarouselItem>
+				<RadzenImage Path="https://cdn.discordapp.com/attachments/1006581059393171521/1296864153394479266/image0.gif?ex=680efc1c&is=680daa9c&hm=f4d328b7e5f2d8280e15f7b45392905084ae08d7ae40e65a5f1ed0530337e8ef&" class="rz-w-100" />
 			</RadzenCarouselItem>
 		</Items>
 	</RadzenCarousel>
 </RadzenStack>
 
 <div id = "ControlRegion">
+	<RadzenButton Text="Test Alert" Click="@ShowAlert" />
 	<div class="product_list">
 		@if (ProductList == null)
 		{
@@ -136,6 +139,17 @@
 		};
 	}
 
+	private void ShowAlert()
+	{
+		NotificationService.Notify(new NotificationMessage
+			{
+				Severity = NotificationSeverity.Success,
+				Summary = "Success",
+				Detail = "Notification test successful!",
+				Duration = 4000
+			});
+	}
+
 	private void GoToProductPage(string ean)
 	{
 		Navigation.NavigateTo($"/products/product/{ean}");
@@ -146,13 +160,24 @@
 		return;
 	}
 
+
+
 	private async void ToggleFavorite(ProductDTO product)
 	{
+		NotificationService.Notify(new NotificationMessage
+		{
+			Severity = NotificationSeverity.Success,
+			Summary = "Success",
+			Detail = "Helllo",
+			Duration = 4000 // in milliseconds
+		});
+
 		string response = await FavouriteService.UpdateFavourite(product.ProductId);
 
-		if (product.IsFavorite == true)
-			product.IsFavorite = false;
-		else
-			product.IsFavorite = true;
+
+		// if (product.IsFavorite == true)
+		// 	product.IsFavorite = false;
+		// else
+		// 	product.IsFavorite = true;
 	}
 }
