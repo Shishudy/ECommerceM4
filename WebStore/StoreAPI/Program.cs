@@ -79,6 +79,11 @@ namespace StoreAPI
 
 			if (app.Environment.IsDevelopment())
 			{
+				app.UseDeveloperExceptionPage();
+			}
+
+			if (app.Environment.IsDevelopment())
+			{
 				app.UseSwagger();
 				app.UseSwaggerUI();
 			}

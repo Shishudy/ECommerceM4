@@ -56,7 +56,7 @@ namespace StoreLibrary.DbModels
             return new Invoice
             {
                 PkInvoice = dto.PkInvoice,
-                FkAddressInvoice = dto.FkAddressInvoice,
+                //FkAddressInvoice = dto.FkAddressInvoice,
                 Name = dto.Name,
                 Nif = dto.Nif,
                 DateInvoice = dto.DateInvoice,
