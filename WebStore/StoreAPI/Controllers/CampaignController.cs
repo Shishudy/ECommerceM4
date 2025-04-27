@@ -2,8 +2,8 @@
 using StoreLibrary.DbModels;
 using Microsoft.EntityFrameworkCore;
 using StoreLibrary.DTOs.Campaigns;
-using StoreLibrary.DTOs.Product;
-
+using StoreLibrary.DbModels;
+using StoreLibrary.Models;
 
 namespace StoreAPI.Controllers
 {
@@ -31,7 +31,7 @@ namespace StoreAPI.Controllers
 			var campaign = new Campaign
 			{
 				PkCampaign = nextId,
-				Name = dto.Name, 
+				Name = dto.Name,
 				DateStart = dto.DateStart,
 				DateEnd = dto.DateEnd
 			};
@@ -45,8 +45,8 @@ namespace StoreAPI.Controllers
 		[HttpGet]
 		public async Task<IActionResult> GetCampaigns()
 		{
-			var campanhas = await _context.Campaigns.ToListAsync();
-			return Ok(campanhas);
+			var campaigns = await _context.Campaigns.ToListAsync();
+			return Ok(campaigns);
 		}
 
 		[HttpGet("active")]
@@ -68,12 +68,11 @@ namespace StoreAPI.Controllers
 			return Ok(activeCampaigns);
 		}
 
-
 		[HttpPost("AssociateProducts")]
 		public async Task<IActionResult> AssociateProducts([FromBody] AssociateProductsDTO dto)
 		{
 			if (!_context.Campaigns.Any(c => c.PkCampaign == dto.CampaignId))
-				return NotFound($"Campanha não encontrada: {dto.CampaignId}");
+				return NotFound($"Campaign not found: {dto.CampaignId}");
 
 			var today = DateOnly.FromDateTime(DateTime.Today);
 			var associations = new List<CampaignProduct>();
@@ -83,12 +82,11 @@ namespace StoreAPI.Controllers
 				bool inActiveCampaign = await _context.CampaignProducts
 					.AnyAsync(cp =>
 						cp.FkProduct == item.ProductId &&
-						cp.FkCampaignNavigation.DateStart <= today &&
 						cp.FkCampaignNavigation.DateEnd >= today);
 
 				if (inActiveCampaign)
 				{
-					return BadRequest($"O produto com ID {item.ProductId} já está em uma campanha ativa.");
+					return BadRequest($"The product with ID {item.ProductId} is already associated with an active campaign.");
 				}
 
 				var exists = await _context.CampaignProducts
@@ -113,11 +111,11 @@ namespace StoreAPI.Controllers
 			{
 				_context.CampaignProducts.AddRange(associations);
 				await _context.SaveChangesAsync();
-				return Ok(new { message = "Produtos associados com sucesso!", total = associations.Count });
+				return Ok(new { message = "Products successfully associated!", total = associations.Count });
 			}
 			else
 			{
-				return BadRequest("Nenhum produto foi associado. Pode já estar na campanha ou em campanha ativa.");
+				return BadRequest("No products were associated. They might already be in the selected campaign or in another active campaign.");
 			}
 		}
 
@@ -127,23 +125,20 @@ namespace StoreAPI.Controllers
 			var products = await _context.Products
 				.Include(p => p.FkCategories)
 				.Include(p => p.FkImageNavigation)
-				.Select(p => new ProductListDTO
+				.Select(p => new ProductDTO
 				{
-					PkProduct = p.PkProduct,
+					ProductId = p.PkProduct,
 					Name = p.Name,
 					Ean = p.Ean,
+					Description = p.Description,
+					Price = p.Price,
 					ImageUrl = p.FkImageNavigation.PathImg,
-
-					Categories = p.FkCategories
-						.Select(c => new ProductCategoryDTO
-						{
-							CategoryId = c.PkCategory,
-							Name = c.Name
-						}).ToList()
+					Category = p.FkCategories.FirstOrDefault() != null ? p.FkCategories.FirstOrDefault()!.Name : "Uncategorized"
 				})
 				.ToListAsync();
 
 			return Ok(products);
 		}
+
 	}
 }

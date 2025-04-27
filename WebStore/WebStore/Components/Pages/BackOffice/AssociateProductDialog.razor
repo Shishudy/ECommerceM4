@@ -39,7 +39,7 @@ else
                             <RadzenButton Text="Remove"
                                           Icon="close"
                                           ButtonStyle="ButtonStyle.Danger"
-                                          Click="@(() => RemoveSelectedProduct(item.Product.PkProduct))"
+                                          Click="@(() => RemoveSelectedProduct(item.Product.ProductId))"
                                           Style="margin-top: 0.5rem;" />
                         </div>
                     </RadzenCard>
@@ -73,7 +73,7 @@ else
             }
             else
             {
-                <p>Loading products...</p>
+                <p>No products available.</p>
             }
         </div>
     </div>
@@ -97,7 +97,7 @@ else
     [Parameter] public int CampaignId { get; set; }
 
     private List<CampaignResponseDTO> activeCampaigns = new();
-    private List<ProductListDTO> products = new();
+    private List<ProductDTO> products = new();
     private List<SelectedProductItem> selectedProducts = new();
     private int selectedCampaignId = 0;
     private int baseDiscount = 0;
@@ -108,7 +108,7 @@ else
         try
         {
             activeCampaigns = await CampaignService.GetActiveCampaignsAsync() ?? new();
-			products = await ProductService.GetAllProductsAsync() ?? new();
+            products = await ProductService.GetProductDtoListAsync() ?? new();
         }
         catch (Exception ex)
         {
@@ -116,12 +116,12 @@ else
         }
 
         isLoading = false;
-        await InvokeAsync(StateHasChanged); // força o redraw
+        await InvokeAsync(StateHasChanged);
     }
 
-    private void AddProduct(ProductListDTO product)
+    private void AddProduct(ProductDTO product)
     {
-        if (!selectedProducts.Any(p => p.Product.PkProduct == product.PkProduct))
+        if (!selectedProducts.Any(p => p.Product.ProductId == product.ProductId))
         {
             selectedProducts.Add(new SelectedProductItem
                 {
@@ -135,7 +135,7 @@ else
 
     private void RemoveSelectedProduct(int productId)
     {
-        var item = selectedProducts.FirstOrDefault(p => p.Product.PkProduct == productId);
+        var item = selectedProducts.FirstOrDefault(p => p.Product.ProductId == productId);
         if (item != null)
         {
             selectedProducts.Remove(item);
@@ -156,7 +156,7 @@ else
                 CampaignId = selectedCampaignId,
                 Products = selectedProducts.Select(p => new ProductDiscount
                 {
-                    ProductId = p.Product.PkProduct,
+                    ProductId = p.Product.ProductId,
                     Discount = p.CustomDiscount ?? baseDiscount
                 }).ToList()
             };
@@ -176,7 +176,7 @@ else
 
     private class SelectedProductItem
     {
-        public ProductListDTO Product { get; set; } = new();
+        public ProductDTO Product { get; set; } = new();
         public int? CustomDiscount { get; set; }
     }
 }
