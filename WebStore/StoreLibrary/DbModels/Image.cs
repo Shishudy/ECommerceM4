@@ -11,9 +11,9 @@ public partial class Image
 
     public string? Name { get; set; }
 
-    public virtual ICollection<Product> Products { get; set; } = new List<Product>();
-
     public virtual ICollection<Campaign> FkCampaigns { get; set; } = new List<Campaign>();
+
+    public virtual ICollection<Product> FkProducts { get; set; } = new List<Product>();
 
     public virtual ICollection<Review> FkReviews { get; set; } = new List<Review>();
 }
