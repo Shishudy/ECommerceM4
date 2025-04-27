@@ -2,6 +2,9 @@ using StoreLibrary.DbModels;
 using System.Collections.Generic;
 using System.Linq;
 
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
+
 namespace StoreLibrary.EfCoreMethods
 {
     public class PurchaseMethods
@@ -16,99 +19,88 @@ namespace StoreLibrary.EfCoreMethods
         // -------------------------------
         // CRUD Operations for Purchases
         // -------------------------------
-        public List<Purchase> GetAllPurchases()
+        public async Task<List<Purchase>> GetAllPurchasesAsync()
         {
-            return _context.Purchases.ToList();
+            return await _context.Purchases.ToListAsync();
         }
 
-        // public Purchase GetPurchaseById(int id)
-        // {
-        //     return _context.Purchases.FirstOrDefault(p => p.PkPurchase == id);
-        // }
-
-        public void AddPurchase(Purchase purchase)
+        public async Task AddPurchaseAsync(Purchase purchase)
         {
-            _context.Purchases.Add(purchase);
-            _context.SaveChanges();
+            await _context.Purchases.AddAsync(purchase);
+            await _context.SaveChangesAsync();
         }
 
-        public void UpdatePurchase(Purchase purchase)
+        public async Task UpdatePurchaseAsync(Purchase purchase)
         {
             _context.Purchases.Update(purchase);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public void DeletePurchase(int id)
+        public async Task DeletePurchaseAsync(int id)
         {
-            var purchase = _context.Purchases.FirstOrDefault(p => p.PkPurchase == id);
+            var purchase = await _context.Purchases.FirstOrDefaultAsync(p => p.PkPurchase == id);
             if (purchase != null)
             {
                 _context.Purchases.Remove(purchase);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
         }
-
-
-
 
         // -------------------------------
         // Purchase Management
         // -------------------------------
-
-        public Purchase GetCartByUserID(string fk_user)
+        public async Task<Purchase> GetCartByUserIDAsync(string fk_user)
         {
-            var cart = _context.Purchases.FirstOrDefault(p => p.FkUser == fk_user && p.Status == "Cart");
+            var cart = await _context.Purchases.FirstOrDefaultAsync(p => p.FkUser == fk_user && p.Status == "Cart");
             if (cart == null)
             {
-                Purchase new_purchase = new Purchase
+                var new_purchase = new Purchase
                 {
                     FkUser = fk_user,
                     Status = "Cart",
                 };
-                AddPurchase(new_purchase); // SaveChanges updates new_purchase
+                await AddPurchaseAsync(new_purchase); // SaveChanges updates new_purchase
                 return new_purchase;
             }
             return cart;
         }
 
-		public void DeletePurchase(string fk_user)
-		{
-			var cart = GetCartByUserID(fk_user);
-			if (cart != null)
-			{
-				DeleteAddressById(cart.FkAddressShipment);
-				DeleteCardById(cart.FkCard);
-				DeleteInvoice(cart.FkUser);
-				_context.PurchaseProducts.RemoveRange(_context.PurchaseProducts.Where(p => p.FkPurchase == cart.PkPurchase));
-				_context.Purchases.Remove(cart);
-				_context.SaveChanges();
-			}
-			else
-				throw new Exception("Cart not found");
-		}
-
-		// -------------------------------
-        // Cart Management
-        // -------------------------------
-		// Get - return, creates if nonexistent
-		// Post - create new #
-		// Put 	- update, upsert: create or update
-		// Delete - remove 
-		// -------------------------------
-
-        public List<PurchaseProduct> GetCartItemsByUserID(string fk_user)
+        public async Task DeletePurchaseAsync(string fk_user)
         {
-			Purchase cart = GetCartByUserID(fk_user);
-            List<PurchaseProduct> items = _context.PurchaseProducts.Where(p => p.FkPurchase == cart.PkPurchase).ToList();
-            return items;
+            var cart = await GetCartByUserIDAsync(fk_user);
+            if (cart != null)
+            {
+                await DeleteAddressByIdAsync(cart.FkAddressShipment);
+                await DeleteCardByIdAsync(cart.FkCard);
+                await DeleteInvoiceAsync(cart.FkUser);
+                _context.PurchaseProducts.RemoveRange(
+                    _context.PurchaseProducts.Where(p => p.FkPurchase == cart.PkPurchase));
+                _context.Purchases.Remove(cart);
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                throw new InvalidOperationException("Cart not found");
+            }
         }
 
-		public void AddItemToCart(string fk_user, int productId, int quantity)
+        // -------------------------------
+        // Cart Management
+        // -------------------------------
+        public async Task<List<PurchaseProduct>> GetCartItemsByUserIDAsync(string fk_user)
         {
-            var cart = GetCartByUserID(fk_user);
+            var cart = await GetCartByUserIDAsync(fk_user);
+            return await _context.PurchaseProducts
+                .Where(p => p.FkPurchase == cart.PkPurchase)
+                .ToListAsync();
+        }
 
-            var existingItem = _context.PurchaseProducts
-                .FirstOrDefault(pp => pp.FkPurchase == cart.PkPurchase && pp.FkProduct == productId);
+        public async Task AddItemToCartAsync(string fk_user, int productId, int quantity)
+        {
+            var cart = await GetCartByUserIDAsync(fk_user);
+
+            var existingItem = await _context.PurchaseProducts
+                .FirstOrDefaultAsync(pp => pp.FkPurchase == cart.PkPurchase && pp.FkProduct == productId);
 
             if (existingItem == null)
             {
@@ -118,120 +110,113 @@ namespace StoreLibrary.EfCoreMethods
                     FkProduct = productId,
                     Qtt = quantity
                 };
-                _context.PurchaseProducts.Add(newItem);
+                await _context.PurchaseProducts.AddAsync(newItem);
             }
             else
             {
                 existingItem.Qtt += quantity;
-				if (existingItem.Qtt < 1)
-					_context.PurchaseProducts.Remove(existingItem);
-				else
-                	_context.PurchaseProducts.Update(existingItem);
+                if (existingItem.Qtt < 1)
+                    _context.PurchaseProducts.Remove(existingItem);
+                else
+                    _context.PurchaseProducts.Update(existingItem);
             }
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public void RemoveItemFromCart(string fk_user, int productId)
-        {//TODO if iteam count goes bellow 1, remove it from cart
-            var cart = GetCartByUserID(fk_user);
+        public async Task RemoveItemFromCartAsync(string fk_user, int productId)
+        {
+            var cart = await GetCartByUserIDAsync(fk_user);
 
-            var itemToRemove = _context.PurchaseProducts
-                .FirstOrDefault(pp => pp.FkPurchase == cart.PkPurchase && pp.FkProduct == productId);
+            var itemToRemove = await _context.PurchaseProducts
+                .FirstOrDefaultAsync(pp => pp.FkPurchase == cart.PkPurchase && pp.FkProduct == productId);
 
             if (itemToRemove != null)
             {
                 _context.PurchaseProducts.Remove(itemToRemove);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
         }
 
-		// -------------------------------
+        // -------------------------------
         // Card Management
         // -------------------------------
-		// Get - return #
-		// Post - create new
-		// Put 	- update #
-		// Delete - remove
-		// -------------------------------
-
-		public List<Card> GetCardsByUserID(string fk_user)
-		{
-			var cards = _context.Cards.Where(c => c.FkUser == fk_user && c.Toogle == true).ToList();
-			return cards;
-		}
-
-        public void AddCardToPurchase(string fk_user, Card card)
+        public async Task<List<Card>> GetCardsByUserIDAsync(string fk_user)
         {
-            var cart = GetCartByUserID(fk_user);
+            return await _context.Cards
+                .Where(c => c.FkUser == fk_user && c.Toogle == true)
+                .ToListAsync();
+        }
 
-            var existingCard = _context.Cards
-                .FirstOrDefault(c => c.PkCard == cart.FkCard);
+        public async Task AddCardToPurchaseAsync(string fk_user, Card card)
+        {
+            var cart = await GetCartByUserIDAsync(fk_user);
 
-			card.FkUser = fk_user;
+            var existingCard = await _context.Cards
+                .FirstOrDefaultAsync(c => c.PkCard == cart.FkCard);
+
+            card.FkUser = fk_user;
 
             if (existingCard == null)
             {
-				cart.FkCardNavigation = card;
-                _context.Cards.Add(card);
-                // cart.FkCard = card.PkCard; // Uncomment if needed
+                cart.FkCardNavigation = card;
+                await _context.Cards.AddAsync(card);
             }
             else
             {
                 existingCard.AssignFrom(card); // Copy values from the new card
                 _context.Cards.Update(existingCard);
             }
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public void DeleteCardById(int? cardId)
+        public async Task DeleteCardByIdAsync(int? cardId)
         {
-			if (cardId == null)
-				throw new Exception("Card ID is null");
-            var card = _context.Cards.FirstOrDefault(c => c.PkCard == cardId);
+            if (cardId == null)
+                throw new InvalidOperationException("Card ID is null");
+
+            var card = await _context.Cards.FirstOrDefaultAsync(c => c.PkCard == cardId);
             if (card != null)
             {
                 card.Toogle = true; // Soft delete
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
-			else
-				throw new Exception("Card not found");
+            else
+            {
+                throw new InvalidOperationException("Card not found");
+            }
         }
 
-
-		// -------------------------------
+        // -------------------------------
         // Invoice Management
         // -------------------------------
-		// Get - return #
-		// Post - create new
-		// Put 	- update #
-		// Delete - remove
-		// -------------------------------
-
-		public List<Invoice>? GetInvoicesByUserID(string fk_user)
-		{
-			IQueryable<int?> fkInvoices = _context.Purchases.Where(p => p.FkUser == fk_user).Select(p => p.FkInvoice);
-			var invoices = _context.Invoices.Where(i => fkInvoices.Contains(i.PkInvoice)).ToList();
-			return invoices;
-		}
-
-		public Invoice? GetInvoiceById(int id)
-		{
-			return _context.Invoices.FirstOrDefault(i => i.PkInvoice == id);
-		}
-
-        public void AddInvoiceToPurchase(string fk_user, Invoice invoice)
+        public async Task<List<Invoice>> GetInvoicesByUserIDAsync(string fk_user)
         {
-            var cart = GetCartByUserID(fk_user);
+            var fkInvoices = _context.Purchases
+                .Where(p => p.FkUser == fk_user)
+                .Select(p => p.FkInvoice);
 
-			cart.Status = "Pending Payment";
-            var existingInvoice = _context.Invoices
-                .FirstOrDefault(i => i.PkInvoice == cart.FkInvoice);
+            return await _context.Invoices
+                .Where(i => fkInvoices.Contains(i.PkInvoice))
+                .ToListAsync();
+        }
+
+        public async Task<Invoice?> GetInvoiceByIdAsync(int id)
+        {
+            return await _context.Invoices.FirstOrDefaultAsync(i => i.PkInvoice == id);
+        }
+
+        public async Task AddInvoiceToPurchaseAsync(string fk_user, Invoice invoice)
+        {
+            var cart = await GetCartByUserIDAsync(fk_user);
+
+            cart.Status = "Pending Payment";
+            var existingInvoice = await _context.Invoices
+                .FirstOrDefaultAsync(i => i.PkInvoice == cart.FkInvoice);
 
             if (existingInvoice == null)
             {
-				cart.FkInvoiceNavigation = invoice;
-                _context.Invoices.Add(invoice);
-                // cart.FkInvoice = invoice.PkInvoice; // Uncomment if needed
+                cart.FkInvoiceNavigation = invoice;
+                await _context.Invoices.AddAsync(invoice);
             }
             else
             {
@@ -239,136 +224,131 @@ namespace StoreLibrary.EfCoreMethods
                 _context.Invoices.Update(existingInvoice);
             }
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-		public void DeleteInvoice(string fk_user)
-		{
-			var cart = GetCartByUserID(fk_user);
+        public async Task DeleteInvoiceAsync(string fk_user)
+        {
+            var cart = await GetCartByUserIDAsync(fk_user);
 
-            var existingInvoice = _context.Invoices
-                .FirstOrDefault(i => i.PkInvoice == cart.FkInvoice);
-			if (existingInvoice != null && cart.Status != "finalized")
-			{
-				DeleteAddressById(existingInvoice.FkAddressInvoice);
-				_context.Invoices.Remove(existingInvoice);
-				_context.SaveChanges();
-			}
-			else
-				throw new Exception("Invoice not found or already finalized");
-		}
+            var existingInvoice = await _context.Invoices
+                .FirstOrDefaultAsync(i => i.PkInvoice == cart.FkInvoice);
+
+            if (existingInvoice != null && cart.Status != "finalized")
+            {
+                await DeleteAddressByIdAsync(existingInvoice.FkAddressInvoice);
+                _context.Invoices.Remove(existingInvoice);
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                throw new InvalidOperationException("Invoice not found or already finalized");
+            }
+        }
 
         // -------------------------------
         // Address Shipment Management
         // -------------------------------
 
-		public List<Address> GetAddressesByUserID(string fk_user)
-		{
-			var addresses = _context.Addresses.Where(a => a.FkUser == fk_user && a.Toggle == true).ToList();
-			return addresses;
-		}
-
-		public void AddAddressToPurchase(string fk_user, Address address)
+        public async Task<List<Address>> GetAddressesByUserIDAsync(string fk_user)
         {
-            var cart = GetCartByUserID(fk_user);
+            return await _context.Addresses
+                .Where(a => a.FkUser == fk_user && a.Toggle == true)
+                .ToListAsync();
+        }
 
-            var existingAddress = _context.Addresses
-                .FirstOrDefault(a => a.PkAddress == cart.FkAddressShipment);
+        public async Task AddAddressToPurchaseAsync(string fk_user, Address address)
+        {
+            var cart = await GetCartByUserIDAsync(fk_user);
 
-			address.FkUser = fk_user;
+            var existingAddress = await _context.Addresses
+                .FirstOrDefaultAsync(a => a.PkAddress == cart.FkAddressShipment);
+
+            address.FkUser = fk_user;
 
             if (existingAddress == null)
             {
-				// if address in cart is null, add new address, creates an copy
-				// cart.FkAddressShipment = address.PkAddress; 
-				cart.FkAddressShipmentNavigation = address;
-                _context.Addresses.Add(address);
-                // cart.FkAddressShipment = address.PkAddress; // Uncomment if needed
+                cart.FkAddressShipmentNavigation = address;
+                await _context.Addresses.AddAsync(address);
             }
             else
             {
-				// if address in cart is not null, update existing address
                 existingAddress.AssignFrom(address); // Copy values from the new address
-				_context.Addresses.Update(existingAddress);
+                _context.Addresses.Update(existingAddress);
             }
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-
-		// -------------------------------
+        // -------------------------------
         // Address Invoice Management
         // -------------------------------
 
-		public List<Address> GetInvoiceAddressByUser(string fk_user)
-		{
-			List<Invoice>? invoices = GetInvoicesByUserID(fk_user);
-			if (invoices == null)
-				throw new Exception("No invoices found for this user");
-			var adresses = invoices
-				.Where(i => i.FkAddressInvoice != null )
-				.Select(i => i.FkAddressInvoiceNavigation);
-			return adresses.Where(a => a.Toggle == true).ToList();
-		}
-
-		public void AddAddressToInvoice(string fk_user, Address address)
-		{
-			var cart = GetCartByUserID(fk_user);
-			var existingInvoice = _context.Invoices
-                .FirstOrDefault(i => i.PkInvoice == cart.FkInvoice);
-
-			// address.FkUser = fk_user;
-			if (existingInvoice == null)
-				throw new Exception("Invoice not found");
-			if (existingInvoice.FkAddressInvoice == null)
-			{
-				existingInvoice.FkAddressInvoiceNavigation = address;
-				_context.Addresses.Add(address);
-				_context.SaveChanges();
-				// existingInvoice.FkAddressInvoice = address.PkAddress;
-			}
-			else
-			{
-				var existingAddress = _context.Addresses
-					.FirstOrDefault(a => a.PkAddress == existingInvoice.FkAddressInvoice);
-
-				if (existingAddress != null)
-				{
-					existingAddress.AssignFrom(address); // Copy values from the new address
-					_context.Addresses.Update(existingAddress);
-				}
-				else
-					throw new Exception("Address not found");
-			}
-			_context.SaveChanges();
-		}
-
-        public void DeleteAddressById(int? addressId)
+        public async Task<List<Address>> GetInvoiceAddressByUserAsync(string fk_user)
         {
-			if (addressId == null)
-				throw new Exception("Address ID is null");
-            var address = _context.Addresses.FirstOrDefault(a => a.PkAddress == addressId);
+            var invoices = await GetInvoicesByUserIDAsync(fk_user);
+            if (invoices == null || !invoices.Any())
+                throw new InvalidOperationException("No invoices found for this user");
+
+            var addresses = invoices
+                .Where(i => i.FkAddressInvoice != null)
+                .Select(i => i.FkAddressInvoiceNavigation)
+                .Where(a => a.Toggle == true)
+                .ToList();
+
+            return addresses;
+        }
+
+        public async Task AddAddressToInvoiceAsync(string fk_user, Address address)
+        {
+            var cart = await GetCartByUserIDAsync(fk_user);
+            var existingInvoice = await _context.Invoices
+                .FirstOrDefaultAsync(i => i.PkInvoice == cart.FkInvoice);
+
+            if (existingInvoice == null)
+                throw new InvalidOperationException("Invoice not found");
+
+            if (existingInvoice.FkAddressInvoice == null)
+            {
+                existingInvoice.FkAddressInvoiceNavigation = address;
+                await _context.Addresses.AddAsync(address);
+            }
+            else
+            {
+                var existingAddress = await _context.Addresses
+                    .FirstOrDefaultAsync(a => a.PkAddress == existingInvoice.FkAddressInvoice);
+
+                if (existingAddress != null)
+                {
+                    existingAddress.AssignFrom(address); // Copy values from the new address
+                    _context.Addresses.Update(existingAddress);
+                }
+                else
+                {
+                    throw new InvalidOperationException("Address not found");
+                }
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteAddressByIdAsync(int? addressId)
+        {
+            if (addressId == null)
+                throw new ArgumentNullException(nameof(addressId), "Address ID cannot be null");
+
+            var address = await _context.Addresses.FirstOrDefaultAsync(a => a.PkAddress == addressId);
             if (address != null)
             {
                 address.Toggle = true; // Soft delete
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
-			else 
-				new Exception("Address not found");
+            else
+            {
+                throw new InvalidOperationException("Address not found");
+            }
         }
-
-		// -------------------------------
-		// Invoice Management
-		// -------------------------------
-
-		// -------------------------------
-		// Invoice Management
-		// -------------------------------
-
-		// -------------------------------
-        // Cart Management
-        // -------------------------------
-
 
     }
 }
+ 

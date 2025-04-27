@@ -2,10 +2,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using StoreLibrary.DbModels;
 using StoreLibrary.EfCoreMethods;
+using System.Threading.Tasks;
 
 namespace StoreAPI.Controllers
 {
-    [Route("api/shipment-addresses")]
+    [Route("api/[Controller]")]
     [ApiController]
     public class ShipmentAddressController : ControllerBase
     {
@@ -18,37 +19,23 @@ namespace StoreAPI.Controllers
 
         // GET: api/shipment-addresses/{fk_user}
         [HttpGet("{fk_user}")]
-        public IActionResult GetAddressesByUserID(string fk_user)
+        public async Task<IActionResult> GetAddressesByUserID(string fk_user)
         {
-            try
-            {
-                var addresses = _purchaseMethods.GetAddressesByUserID(fk_user);
-                if (addresses == null || !addresses.Any())
-                    return NotFound("No shipment addresses found for the specified user.");
-                return Ok(addresses);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var addresses = await _purchaseMethods.GetAddressesByUserIDAsync(fk_user);
+            if (addresses == null || !addresses.Any())
+                return NotFound("No shipment addresses found for the specified user.");
+            return Ok(addresses);
         }
 
         // POST: api/shipment-addresses/{fk_user}
         [HttpPost("{fk_user}")]
-        public IActionResult AddAddressToPurchase(string fk_user, [FromBody] Address address)
+        public async Task<IActionResult> AddAddressToPurchase(string fk_user, [FromBody] Address address)
         {
             if (address == null)
                 return BadRequest("Address data is required.");
 
-            try
-            {
-                _purchaseMethods.AddAddressToPurchase(fk_user, address);
-                return CreatedAtAction(nameof(GetAddressesByUserID), new { fk_user }, address);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            await _purchaseMethods.AddAddressToPurchaseAsync(fk_user, address);
+            return CreatedAtAction(nameof(GetAddressesByUserID), new { fk_user }, address);
         }
     }
 }
