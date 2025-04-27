@@ -2,17 +2,20 @@
 using StoreLibrary.DTOs.Auth;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
+
 namespace WebStore.Services
 {
 	public class AuthService
 	{
 		private readonly HttpClient _http;
 		private readonly CustomAuthStateProvider _authProvider;
+		private readonly TokenProvider _tokenProvider;
 
-		public AuthService(IHttpClientFactory factory, CustomAuthStateProvider authProvider)
+		public AuthService(IHttpClientFactory factory, CustomAuthStateProvider authProvider, TokenProvider tokenProvider)
 		{
 			_http = factory.CreateClient("API");
 			_authProvider = authProvider;
+			_tokenProvider = tokenProvider;
 		}
 
 		public async Task<string> Login(LoginModel model)
@@ -23,17 +26,11 @@ namespace WebStore.Services
 			{
 				var token = await response.Content.ReadAsStringAsync();
 				await _authProvider.SetToken(token);
-
-				_authProvider.Notify();
-
 				return "success";
 			}
 
 			return "fail";
 		}
-
-
-
 
 		public async Task<object> Register(RegisterModel model)
 		{
@@ -43,6 +40,7 @@ namespace WebStore.Services
 			{
 				return "success";
 			}
+
 			var content = await response.Content.ReadFromJsonAsync<List<IdentityError>>();
 
 			if (content != null)
@@ -54,8 +52,6 @@ namespace WebStore.Services
 			return new List<string> { "Erro desconhecido." };
 		}
 
-
-
 		public async Task<AuthenticationState> GetAuthState()
 		{
 			return await _authProvider.GetAuthenticationStateAsync();
@@ -63,12 +59,7 @@ namespace WebStore.Services
 
 		public async Task Logout()
 		{
-			_authProvider.Logout();
-			await Task.CompletedTask;
+			await _authProvider.Logout();
 		}
-
-
-
 	}
 }
-

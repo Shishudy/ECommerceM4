@@ -1,73 +1,57 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
-using Microsoft.AspNetCore.Hosting.Server;
-using System.ComponentModel;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using WebStore.Components.Pages.FrontOffice;
 
 namespace WebStore.Services
 {
 	public class CustomAuthStateProvider : AuthenticationStateProvider
 	{
-		private readonly ProtectedLocalStorage _localStorage;
-		private const string TokenKey = "authToken";
+		private readonly TokenProvider _tokenProvider;
+		private readonly ClaimsPrincipal _anonymous = new ClaimsPrincipal(new ClaimsIdentity());
 
-		public CustomAuthStateProvider(ProtectedLocalStorage localStorage)
+		public CustomAuthStateProvider(TokenProvider tokenProvider)
 		{
-			_localStorage = localStorage;
+			_tokenProvider = tokenProvider;
 		}
+
 		public void Notify()
 		{
 			NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
 		}
 
-		//Serve para informar o Blazor que o estado de autenticação mudou(por exemplo, login ou logout).
-		//Todos os componentes que usam AuthenticationStateProvider ou<AuthorizeView> vão reagir e re-renderizar.
 		public async Task SetToken(string token)
 		{
-			await _localStorage.SetAsync(TokenKey, token);
-			NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+			_tokenProvider.Token = token;
+			Notify();
+			await Task.CompletedTask;
 		}
 
 		public async Task Logout()
 		{
-			await _localStorage.DeleteAsync(TokenKey);
-			NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+			_tokenProvider.Token = null;
+			Notify();
+			await Task.CompletedTask;
 		}
 
-		public override async Task<AuthenticationState> GetAuthenticationStateAsync()
+		public override Task<AuthenticationState> GetAuthenticationStateAsync()
 		{
-			try
+			if (string.IsNullOrWhiteSpace(_tokenProvider.Token))
 			{
-				var storedToken = await _localStorage.GetAsync<string>(TokenKey);
-				var token = storedToken.Success ? storedToken.Value : null;
-
-				Console.WriteLine("Token armazenado: " + token);
-
-				if (string.IsNullOrWhiteSpace(token))
-				{
-					Console.WriteLine("Token está vazio ou nulo.");
-					return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
-				}
-
-				var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
-
-				foreach (var claim in jwt.Claims)
-				{
-					Console.WriteLine($"Claim: {claim.Type} - {claim.Value}");
-				}
-
-				var identity = new ClaimsIdentity(jwt.Claims, "jwt", ClaimTypes.Name, ClaimTypes.Role);
-				return new AuthenticationState(new ClaimsPrincipal(identity));
+				return Task.FromResult(new AuthenticationState(_anonymous));
 			}
-			catch (Exception ex)
+
+			var jwt = new JwtSecurityTokenHandler().ReadJwtToken(_tokenProvider.Token);
+
+			if (jwt.ValidTo < DateTime.UtcNow)
 			{
-				Console.WriteLine("Erro ao obter estado de autenticação: " + ex.Message);
-				return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+				_tokenProvider.Token = null;
+				return Task.FromResult(new AuthenticationState(_anonymous));
 			}
+
+			var identity = new ClaimsIdentity(jwt.Claims, "jwt", ClaimTypes.Name, ClaimTypes.Role);
+			var user = new ClaimsPrincipal(identity);
+
+			return Task.FromResult(new AuthenticationState(user));
 		}
-
 	}
 }
-

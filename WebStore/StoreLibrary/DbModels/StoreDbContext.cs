@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
@@ -55,9 +55,7 @@ public partial class StoreDbContext : DbContext
 
             entity.ToTable("Address");
 
-            entity.Property(e => e.PkAddress)
-                .ValueGeneratedNever()
-                .HasColumnName("pk_address");
+            entity.Property(e => e.PkAddress).HasColumnName("pk_address");
             entity.Property(e => e.Country)
                 .HasMaxLength(50)
                 .HasColumnName("country");
@@ -85,9 +83,7 @@ public partial class StoreDbContext : DbContext
 
             entity.ToTable("Campaign");
 
-            entity.Property(e => e.PkCampaign)
-                .ValueGeneratedNever()
-                .HasColumnName("pk_campaign");
+            entity.Property(e => e.PkCampaign).HasColumnName("pk_campaign");
             entity.Property(e => e.DateEnd).HasColumnName("date_end");
             entity.Property(e => e.DateStart).HasColumnName("date_start");
             entity.Property(e => e.Name)
@@ -141,9 +137,7 @@ public partial class StoreDbContext : DbContext
 
             entity.ToTable("card");
 
-            entity.Property(e => e.PkCard)
-                .ValueGeneratedNever()
-                .HasColumnName("pk_card");
+            entity.Property(e => e.PkCard).HasColumnName("pk_card");
             entity.Property(e => e.Code).HasColumnName("code");
             entity.Property(e => e.Expiration).HasColumnName("expiration");
             entity.Property(e => e.FkUser)
@@ -162,9 +156,7 @@ public partial class StoreDbContext : DbContext
 
             entity.ToTable("Category");
 
-            entity.Property(e => e.PkCategory)
-                .ValueGeneratedNever()
-                .HasColumnName("pk_category");
+            entity.Property(e => e.PkCategory).HasColumnName("pk_category");
             entity.Property(e => e.Name)
                 .HasMaxLength(50)
                 .HasColumnName("name");
@@ -188,9 +180,7 @@ public partial class StoreDbContext : DbContext
 
             entity.ToTable("Image");
 
-            entity.Property(e => e.PkImage)
-                .ValueGeneratedNever()
-                .HasColumnName("pk_image");
+            entity.Property(e => e.PkImage).HasColumnName("pk_image");
             entity.Property(e => e.Name)
                 .HasMaxLength(50)
                 .HasColumnName("name");
@@ -205,9 +195,7 @@ public partial class StoreDbContext : DbContext
 
             entity.ToTable("Invoice");
 
-            entity.Property(e => e.PkInvoice)
-                .ValueGeneratedNever()
-                .HasColumnName("pk_invoice");
+            entity.Property(e => e.PkInvoice).HasColumnName("pk_invoice");
             entity.Property(e => e.Amount).HasColumnName("amount");
             entity.Property(e => e.DateInvoice).HasColumnName("date_invoice");
             entity.Property(e => e.FkAddressInvoice).HasColumnName("fk_address_invoice");
@@ -231,9 +219,7 @@ public partial class StoreDbContext : DbContext
 
             entity.ToTable("Product");
 
-            entity.Property(e => e.PkProduct)
-                .ValueGeneratedNever()
-                .HasColumnName("pk_product");
+            entity.Property(e => e.PkProduct).HasColumnName("pk_product");
             entity.Property(e => e.Description).HasColumnName("description");
             entity.Property(e => e.Ean)
                 .HasMaxLength(50)
@@ -259,7 +245,7 @@ public partial class StoreDbContext : DbContext
                         .HasConstraintName("FK_ProductCategory_Product"),
                     j =>
                     {
-                        j.HasKey("FkProduct", "FkCategory");
+                        j.HasKey("FkProduct", "FkCategory").HasName("PK_ProductCategory_1");
                         j.ToTable("ProductCategory");
                         j.IndexerProperty<int>("FkProduct").HasColumnName("fk_product");
                         j.IndexerProperty<int>("FkCategory").HasColumnName("fk_category");
@@ -291,9 +277,7 @@ public partial class StoreDbContext : DbContext
 
             entity.ToTable("Purchase");
 
-            entity.Property(e => e.PkPurchase)
-                .ValueGeneratedNever()
-                .HasColumnName("pk_purchase");
+            entity.Property(e => e.PkPurchase).HasColumnName("pk_purchase");
             entity.Property(e => e.DatePurchase).HasColumnName("date_purchase");
             entity.Property(e => e.FkAddressShipment).HasColumnName("fk_address_shipment");
             entity.Property(e => e.FkCard).HasColumnName("fk_card");
@@ -359,9 +343,7 @@ public partial class StoreDbContext : DbContext
 
             entity.ToTable("Review");
 
-            entity.Property(e => e.PkReview)
-                .ValueGeneratedNever()
-                .HasColumnName("pk_review");
+            entity.Property(e => e.PkReview).HasColumnName("pk_review");
             entity.Property(e => e.Comment)
                 .HasMaxLength(50)
                 .HasColumnName("comment");
@@ -395,9 +377,7 @@ public partial class StoreDbContext : DbContext
 
             entity.ToTable("User");
 
-            entity.Property(e => e.PkUser)
-                .ValueGeneratedNever()
-                .HasColumnName("pk_user");
+            entity.Property(e => e.PkUser).HasColumnName("pk_user");
             entity.Property(e => e.FkUser)
                 .HasMaxLength(500)
                 .HasColumnName("fk_user");
