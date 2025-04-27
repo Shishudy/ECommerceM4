@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http.Json;
-using System.Reflection;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Web;
-using Azure.Core.Serialization;
-using StoreLibrary.DbModels;
-using StoreLibrary.Models;
+﻿using StoreLibrary.Models;
 
 namespace WebStore.Services
 {

@@ -24,4 +24,11 @@
     <ProjectReference Include="..\StoreLibrary\StoreLibrary.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\Images\Campaigns\" />
+    <Folder Include="wwwroot\Images\Products\" />
+    <Folder Include="wwwroot\Images\Reviews\" />
+    <Folder Include="wwwroot\Images\Users\" />
+  </ItemGroup>
+
 </Project>
