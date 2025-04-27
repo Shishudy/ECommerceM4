@@ -4,13 +4,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using StoreAPI.Data;
+using StoreAPI.Areas.Identity.Data;
+
 
 #nullable disable
 
 namespace StoreAPI.Migrations
 {
-    [DbContext(typeof(IdentityContext))]
+	[DbContext(typeof(IdentityContext))]
     partial class IdentityContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
