@@ -27,7 +27,7 @@ namespace StoreAPI.Controllers
 			var query = _context.Products
 				.Where(p => p.Toggle == true)
 				.Include(p => p.FkCategories)
-				.Include(p => p.FkImageNavigation)
+				.Include(p => p.FkImages)
 				.AsQueryable();
 
 			if (search != null)
@@ -42,7 +42,6 @@ namespace StoreAPI.Controllers
 				if (category != null)
 				{
 					query = query.Where(p => p.FkCategories.Any(c => c.Name.Equals(category, StringComparison.OrdinalIgnoreCase)));
-
 				}
 				if (filter != null)
 				{
@@ -80,7 +79,14 @@ namespace StoreAPI.Controllers
 						.FirstOrDefault(),
 					InStock = p.Stock > 0,
 					IsFavorite = false ,
-					ImageUrl = p.FkImageNavigation.PathImg
+					MainImage = p.FkImages
+						.Select(img => new ImageDTO
+						{
+							ImageId = img.PkImage,
+							PathImg = img.PathImg,
+							Name = img.Name
+						})
+						.FirstOrDefault() ?? new ImageDTO()
 				})
 				.ToListAsync();
 
@@ -115,7 +121,7 @@ namespace StoreAPI.Controllers
 			
 			DateOnly today = DateOnly.FromDateTime(DateTime.UtcNow);
 
-			ProductPageDTO product = await query
+			ProductPageDTO? product = await query
 				.Select(p => new ProductPageDTO
 				{
 					ProductId = p.PkProduct,
@@ -136,21 +142,39 @@ namespace StoreAPI.Controllers
 						.Select(c => c.Name)
 						.FirstOrDefault() ?? string.Empty,
 					IsFavorite = false,
-					ImagePathList = new List<string>
-					{
-						p.FkImageNavigation.PathImg
-					},
-					ReviewList = p.PurchaseProducts
-						.Where(pp => pp.FkReview != null && pp.FkReviewNavigation != null)
+					MainImage = p.FkImages
+						.Select(img => new ImageDTO
+						{
+							ImageId = img.PkImage,
+							PathImg = img.PathImg,
+							Name = img.Name
+						})
+						.FirstOrDefault() ?? new ImageDTO(),
+					ImageDTOList = p.FkImages
+						.Where(img => img.PkImage != p.FkImage)
+						.Select(img => new ImageDTO
+						{
+							ImageId = img.PkImage,
+							PathImg = img.PathImg,
+							Name = img.Name
+						})
+						.ToList(),
+					ReviewDTOList = p.PurchaseProducts
+						.Where(pp => pp.FkReviewNavigation != null)
 						.Select(pp => new ReviewDTO
 						{
 							ReviewId = pp.FkReviewNavigation.PkReview,
 							ReviewDate = pp.FkReviewNavigation.DataReview,
 							Stars = pp.FkReviewNavigation.Stars,
 							Comment = pp.FkReviewNavigation.Comment,
-							ReviewImagesPath = pp.FkReviewNavigation.FkImages != null
-								? pp.FkReviewNavigation.FkImages.Select(img => img.PathImg).ToList()
-								: new List<string>()
+							ImageDTOList = pp.FkReviewNavigation.FkImages
+								.Select(img => new ImageDTO
+								{
+									ImageId = img.PkImage,
+									PathImg = img.PathImg,
+									Name = img.Name
+								})
+								.ToList()
 						})
 						.Distinct()
 						.ToList()
