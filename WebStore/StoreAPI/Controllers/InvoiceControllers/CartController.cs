@@ -2,10 +2,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using StoreLibrary.DbModels;
 using StoreLibrary.EfCoreMethods;
+using System.Threading.Tasks;
 
 namespace StoreAPI.Controllers
 {
-    [Route("api/cart")]
+    [Route("api/[Controller]")]
     [ApiController]
     public class CartController : ControllerBase
     {
@@ -18,52 +19,31 @@ namespace StoreAPI.Controllers
 
         // GET: api/cart/{fk_user}/items
         [HttpGet("{fk_user}/items")]
-        public IActionResult GetCartItemsByUserID(string fk_user)
+        public async Task<IActionResult> GetCartItemsByUserID(string fk_user)
         {
-            try
-            {
-                var items = _purchaseMethods.GetCartItemsByUserID(fk_user);
-                if (items == null || !items.Any())
-                    return NotFound("No items found in the cart for the specified user.");
-                return Ok(items);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var items = await _purchaseMethods.GetCartItemsByUserIDAsync(fk_user);
+            if (items == null || !items.Any())
+                return NotFound("No items found in the cart for the specified user.");
+            return Ok(items);
         }
 
         // POST: api/cart/{fk_user}/items
         [HttpPost("{fk_user}/items")]
-        public IActionResult AddItemToCart(string fk_user, [FromBody] CartItemDto cartItem)
+        public async Task<IActionResult> AddItemToCart(string fk_user, [FromBody] CartItemDto cartItem)
         {
             if (cartItem == null || cartItem.ProductId <= 0 || cartItem.Quantity <= 0)
                 return BadRequest("Invalid cart item data.");
 
-            try
-            {
-                _purchaseMethods.AddItemToCart(fk_user, cartItem.ProductId, cartItem.Quantity);
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            await _purchaseMethods.AddItemToCartAsync(fk_user, cartItem.ProductId, cartItem.Quantity);
+            return NoContent();
         }
 
         // DELETE: api/cart/{fk_user}/items/{productId}
         [HttpDelete("{fk_user}/items/{productId}")]
-        public IActionResult RemoveItemFromCart(string fk_user, int productId)
+        public async Task<IActionResult> RemoveItemFromCart(string fk_user, int productId)
         {
-            try
-            {
-                _purchaseMethods.RemoveItemFromCart(fk_user, productId);
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return NotFound(ex.Message);
-            }
+            await _purchaseMethods.RemoveItemFromCartAsync(fk_user, productId);
+            return NoContent();
         }
     }
 
