@@ -40,15 +40,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var campaigns = await CampaignService.GetAllCampaignsAsync();
-        var activeCampaign = campaigns.FirstOrDefault(c => c.DateEnd >= DateOnly.FromDateTime(DateTime.Today));
-        if (activeCampaign != null)
-        {
-            createdCampaignId = activeCampaign.PkCampaign;
-            campaignName = activeCampaign.Name;
-            startDate = activeCampaign.DateStart.ToDateTime(TimeOnly.MinValue);
-            endDate = activeCampaign.DateEnd.ToDateTime(TimeOnly.MinValue);
-        }
+
     }
 
     private async Task SaveCampaignAsync()
