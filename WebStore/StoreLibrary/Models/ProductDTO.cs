@@ -18,6 +18,6 @@ namespace StoreLibrary.Models
 		public double Discount { get; set; }
 		public bool InStock { get; set; }
 		public bool IsFavorite { get; set; } = false;
-		public string ImageUrl { get; set; } = null!;
+		public ImageDTO MainImage { get; set; } = null!;
 	}
 }
