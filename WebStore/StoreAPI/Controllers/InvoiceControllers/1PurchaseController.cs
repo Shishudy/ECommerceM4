@@ -16,6 +16,10 @@ namespace StoreAPI.Controllers
             _purchaseMethods = purchaseMethods;
         } 
         
+        // -------------------------------
+        // Purchase Management
+        // -------------------------------
+
         [HttpGet("api/purchases")]
         public IActionResult GetAllPurchases()
         {
@@ -60,6 +64,8 @@ namespace StoreAPI.Controllers
             return Ok(cart);
         }
         
+//
+
         [HttpGet("api/cart/{fk_user}/items")]
         public IActionResult GetCartItemsByUserID(string fk_user)
         {

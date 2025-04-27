@@ -302,10 +302,13 @@ namespace StoreLibrary.EfCoreMethods
 
 		public List<Address> GetInvoiceAddressByUser(string fk_user)
 		{
-			var invoices = GetInvoicesByUserID(fk_user)
+			List<Invoice>? invoices = GetInvoicesByUserID(fk_user);
+			if (invoices == null)
+				throw new Exception("No invoices found for this user");
+			var adresses = invoices
 				.Where(i => i.FkAddressInvoice != null )
 				.Select(i => i.FkAddressInvoiceNavigation);
-			return invoices.Where(a => a.Toggle == true).ToList();
+			return adresses.Where(a => a.Toggle == true).ToList();
 		}
 
 		public void AddAddressToInvoice(string fk_user, Address address)
@@ -315,7 +318,8 @@ namespace StoreLibrary.EfCoreMethods
                 .FirstOrDefault(i => i.PkInvoice == cart.FkInvoice);
 
 			// address.FkUser = fk_user;
-
+			if (existingInvoice == null)
+				throw new Exception("Invoice not found");
 			if (existingInvoice.FkAddressInvoice == null)
 			{
 				existingInvoice.FkAddressInvoiceNavigation = address;
