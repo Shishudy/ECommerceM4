@@ -5,13 +5,14 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using StoreAPI.Data;
+using StoreAPI.Areas.Identity.Data;
+
 
 #nullable disable
 
 namespace StoreAPI.Migrations
 {
-    [DbContext(typeof(IdentityContext))]
+	[DbContext(typeof(IdentityContext))]
     [Migration("20250415131259_Identity1")]
     partial class Identity1
     {

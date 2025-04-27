@@ -68,7 +68,12 @@ namespace WebStore.Services
 
 			return null;
 		}
-		
+
+		public async Task<List<ProductDTO>> GetAllProductsAsync()
+		{
+			return await _http.GetFromJsonAsync<List<ProductDTO>>("api/product") ?? new();
+		}
+
 
 		//public async Task AddProductAsync(Product product)
 		//{

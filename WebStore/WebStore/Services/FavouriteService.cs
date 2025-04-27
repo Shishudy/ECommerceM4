@@ -24,7 +24,7 @@ namespace WebStore.Services
 		{
 			var response = await _http.PostAsync($"api/favourites/toggle/{productId}", null);
 
-			return await response.Content.ReadFromJsonAsync<string>();
+			return await response.Content.ReadAsStringAsync();
 		}
 	}
 }
