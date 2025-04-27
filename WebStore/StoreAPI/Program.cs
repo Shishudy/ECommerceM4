@@ -50,6 +50,7 @@ namespace StoreAPI
 			// JWT
 			var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 			var key = Encoding.ASCII.GetBytes(jwtSettings["SecretKey"]);
+			
 			// TODO Uncomment!!!!!
 			// builder.Services.AddAuthentication(options =>
 			// {
@@ -87,8 +88,8 @@ namespace StoreAPI
 				app.UseSwagger();
 				app.UseSwaggerUI();
 			}
+			
 			// TODO Uncomment!!!!!
-
 			// app.UseAuthentication();
 			app.UseAuthorization();
 
