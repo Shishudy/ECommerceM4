@@ -21,4 +21,3 @@ public partial class Card
 
     public virtual ICollection<Purchase> Purchases { get; set; } = new List<Purchase>();
 }
-
