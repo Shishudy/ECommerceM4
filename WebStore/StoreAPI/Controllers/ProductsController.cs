@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using StoreLibrary.DbModels;
 using StoreLibrary.Models;
 
 namespace StoreAPI.Controllers
 {
-	[Route("api/products")]
+	[Route("api/[controller]")]
 	[ApiController]
-	public class ProductsController: ControllerBase
+	public class ProductsController : ControllerBase
 	{
 		private readonly StoreDbContext _context;
 
@@ -20,9 +16,9 @@ namespace StoreAPI.Controllers
 			_context = context;
 		}
 
-		// GET: api/products/category/tecnologia
+
 		[HttpGet("category/{category?}")]
-		public async Task<ActionResult<List<ProductDTO>>> GetProductDtoList(string? category, [FromQuery] FilterDTO? filter, [FromQuery] string? search = null)
+		public async Task<ActionResult<List<ProductDTO>>> GetProductDtoList(string? category, [FromQuery] FilterDTO? filter, string? search)
 		{
 			var query = _context.Products
 				.Where(p => p.Toggle == true)
@@ -30,53 +26,36 @@ namespace StoreAPI.Controllers
 				.Include(p => p.FkImages)
 				.AsQueryable();
 
-			if (search != null)
+			if (!string.IsNullOrWhiteSpace(search))
 			{
 				query = query.Where(p =>
 					p.Name.Contains(search) ||
 					p.Description.Contains(search) ||
-					p.Ean.Contains(search));
+					p.Ean.Contains(search)
+				);
 			}
-			else
+
+			if (!string.IsNullOrWhiteSpace(category))
 			{
 				if (category != null)
 				{
 					query = query.Where(p => p.FkCategories.Any(c => c.Name.Equals(category, StringComparison.OrdinalIgnoreCase)));
 				}
-				if (filter != null)
+
+				if (filter.MaxPrice != null)
 				{
-					if (filter.MinPrice != null)
-						query = query.Where(p => p.Price >= filter.MinPrice.Value);
-					if (filter.MaxPrice != null)
-						query = query.Where(p => p.Price >= filter.MaxPrice.Value);
-					if (filter.InStock == true)
-						query = query.Where(p => p.Stock > 0);
-					else if (filter.InStock == false)
-						query = query.Where(p => (p.Stock == 0));
+					query = query.Where(p => p.Price <= filter.MaxPrice);
 				}
 			}
 
-			DateOnly today = DateOnly.FromDateTime(DateTime.UtcNow);
-
-			List<ProductDTO> productDtoList = await query
+			var products = await query
 				.Select(p => new ProductDTO
 				{
 					ProductId = p.PkProduct,
 					Ean = p.Ean,
 					Name = p.Name,
-					Category = p.FkCategories
-						.OrderBy(c => c.PkCategory)
-						.Select(c => c.Name)
-						.FirstOrDefault() ?? string.Empty,
 					Description = p.Description,
 					Price = p.Price,
-					Discount = p.CampaignProducts
-						.Where(cp =>
-							cp.FkCampaignNavigation.DateStart <= today &&
-							cp.FkCampaignNavigation.DateEnd >= today)
-						.OrderByDescending(cp => cp.FkCampaignNavigation.DateStart)
-						.Select(cp => cp.Discount)
-						.FirstOrDefault(),
 					InStock = p.Stock > 0,
 					IsFavorite = false ,
 					MainImage = p.FkImages
@@ -90,25 +69,7 @@ namespace StoreAPI.Controllers
 				})
 				.ToListAsync();
 
-			if (productDtoList == null)
-				return NotFound();
-			
-			var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-			if (userId != null)
-			{
-				List<int> favoriteProductIds = await _context.Favourites
-					.Where(f => f.FkUser == userId)
-					.Select(f => f.FkProduct)
-					.ToListAsync();
-
-				foreach (ProductDTO productDto in productDtoList)
-				{
-					productDto.IsFavorite = favoriteProductIds.Contains(productDto.ProductId);
-				}
-			}
-
-			return Ok(productDtoList);
+			return Ok(products);
 		}
 
 		[HttpGet("product/{ean}")]

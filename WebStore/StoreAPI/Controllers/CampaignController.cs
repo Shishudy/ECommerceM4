@@ -25,11 +25,8 @@ namespace StoreAPI.Controllers
 				return BadRequest("Invalid data.");
 			}
 
-			int nextId = (_context.Campaigns.Any() ? _context.Campaigns.Max(c => c.PkCampaign) : 0) + 1;
-
 			var campaign = new Campaign
 			{
-				PkCampaign = nextId,
 				Name = dto.Name,
 				DateStart = dto.DateStart,
 				DateEnd = dto.DateEnd
@@ -40,6 +37,7 @@ namespace StoreAPI.Controllers
 
 			return Ok(new { message = "Campaign created successfully!", id = campaign.PkCampaign });
 		}
+
 
 		[HttpGet]
 		public async Task<IActionResult> GetCampaigns()
@@ -122,22 +120,25 @@ namespace StoreAPI.Controllers
 		public async Task<IActionResult> GetAllProducts()
 		{
 			var products = await _context.Products
-				.Include(p => p.FkCategories)
-				.Include(p => p.FkImageNavigation)
+				.Include(p => p.FkCategories) 
 				.Select(p => new ProductDTO
 				{
 					ProductId = p.PkProduct,
-					Name = p.Name,
 					Ean = p.Ean,
+					Name = p.Name,
 					Description = p.Description,
 					Price = p.Price,
-					ImageUrl = p.FkImageNavigation.PathImg,
-					Category = p.FkCategories.FirstOrDefault() != null ? p.FkCategories.FirstOrDefault()!.Name : "Uncategorized"
+					Discount = 0, 
+					InStock = p.Stock > 0,
+					IsFavorite = false, 
+					ImageUrl = p.FkImage.ToString(), 
+					Category = p.FkCategories.FirstOrDefault() != null ? p.FkCategories.First().Name : "Uncategorized"
 				})
 				.ToListAsync();
 
 			return Ok(products);
 		}
+
 
 	}
 }
