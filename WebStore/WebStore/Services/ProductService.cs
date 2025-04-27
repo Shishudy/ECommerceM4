@@ -7,6 +7,7 @@ using System.Text.Json.Serialization;
 using System.Web;
 using Azure.Core.Serialization;
 using StoreLibrary.DbModels;
+using StoreLibrary.DTOs.Product;
 using StoreLibrary.Models;
 
 namespace WebStore.Services
@@ -68,7 +69,11 @@ namespace WebStore.Services
 
 			return null;
 		}
-		
+
+		public async Task<List<ProductListDTO>> GetAllProductsAsync()
+		{
+			return await _http.GetFromJsonAsync<List<ProductListDTO>>("api/product") ?? new();
+		}
 
 		//public async Task AddProductAsync(Product product)
 		//{
