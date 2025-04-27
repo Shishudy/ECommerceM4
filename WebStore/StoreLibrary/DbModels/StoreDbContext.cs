@@ -43,9 +43,9 @@ public partial class StoreDbContext : DbContext
 
     public virtual DbSet<UserImage> UserImages { get; set; }
 
-//    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-//        => optionsBuilder.UseSqlServer("Server=localhost;Database=StoreDB;TrustServerCertificate=True;MultipleActiveResultSets=true;Trusted_Connection=True");
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=localhost;Database=StoreDB;TrustServerCertificate=True;MultipleActiveResultSets=true;Trusted_Connection=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -234,9 +234,7 @@ public partial class StoreDbContext : DbContext
             entity.Property(e => e.PkProduct)
                 .ValueGeneratedNever()
                 .HasColumnName("pk_product");
-            entity.Property(e => e.Description)
-                .HasMaxLength(50)
-                .HasColumnName("description");
+            entity.Property(e => e.Description).HasColumnName("description");
             entity.Property(e => e.Ean)
                 .HasMaxLength(50)
                 .HasColumnName("ean");
@@ -401,11 +399,6 @@ public partial class StoreDbContext : DbContext
             entity.Property(e => e.FkUser)
                 .HasMaxLength(500)
                 .HasColumnName("fk_user");
-
-            entity.HasOne(d => d.FkImageNavigation).WithMany()
-                .HasForeignKey(d => d.FkImage)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_UserImage_Image");
         });
 
         OnModelCreatingPartial(modelBuilder);
