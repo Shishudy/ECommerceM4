@@ -4,7 +4,6 @@ using Radzen;
 using WebStore;
 using WebStore.Services;
 using WebStore.Components;
-using WebStore.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +12,7 @@ builder.Services.AddRazorComponents()
 	.AddInteractiveServerComponents();
 
 // Radzen Services
+builder.Services.AddRadzenComponents();
 builder.Services.AddScoped<DialogService>();
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<TooltipService>();
