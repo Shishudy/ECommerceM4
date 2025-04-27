@@ -2,10 +2,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using StoreLibrary.DbModels;
 using StoreLibrary.EfCoreMethods;
+using System.Threading.Tasks;
 
 namespace StoreAPI.Controllers.InvoiceControllers
 {
-    [Route("api/invoices")]
+    [Route("api/[Controller]")]
     [ApiController]
     public class InvoiceController : ControllerBase
     {
@@ -18,9 +19,9 @@ namespace StoreAPI.Controllers.InvoiceControllers
 
         // GET: api/invoices/{fk_user}
         [HttpGet("{fk_user}")]
-        public IActionResult GetInvoicesByUserID(string fk_user)
+        public async Task<IActionResult> GetInvoicesByUserID(string fk_user)
         {
-            var invoices = _purchaseMethods.GetInvoicesByUserID(fk_user);
+            var invoices = await _purchaseMethods.GetInvoicesByUserIDAsync(fk_user);
             if (invoices == null || !invoices.Any())
                 return NotFound("No invoices found for the specified user.");
             return Ok(invoices);
@@ -28,9 +29,9 @@ namespace StoreAPI.Controllers.InvoiceControllers
 
         // GET: api/invoices/id/{id}
         [HttpGet("id/{id}")]
-        public IActionResult GetInvoiceById(int id)
+        public async Task<IActionResult> GetInvoiceById(int id)
         {
-            var invoice = _purchaseMethods.GetInvoiceById(id);
+            var invoice = await _purchaseMethods.GetInvoiceByIdAsync(id);
             if (invoice == null)
                 return NotFound("Invoice not found.");
             return Ok(invoice);
@@ -38,28 +39,21 @@ namespace StoreAPI.Controllers.InvoiceControllers
 
         // POST: api/invoices/{fk_user}
         [HttpPost("{fk_user}")]
-        public IActionResult AddInvoiceToPurchase(string fk_user, [FromBody] Invoice invoice)
+        public async Task<IActionResult> AddInvoiceToPurchase(string fk_user, [FromBody] Invoice invoice)
         {
             if (invoice == null)
                 return BadRequest("Invoice data is required.");
 
-            _purchaseMethods.AddInvoiceToPurchase(fk_user, invoice);
+            await _purchaseMethods.AddInvoiceToPurchaseAsync(fk_user, invoice);
             return CreatedAtAction(nameof(GetInvoicesByUserID), new { fk_user }, invoice);
         }
 
         // DELETE: api/invoices/{fk_user}
         [HttpDelete("{fk_user}")]
-        public IActionResult DeleteInvoice(string fk_user)
+        public async Task<IActionResult> DeleteInvoice(string fk_user)
         {
-            try
-            {
-                _purchaseMethods.DeleteInvoice(fk_user);
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return NotFound(ex.Message);
-            }
+            await _purchaseMethods.DeleteInvoiceAsync(fk_user);
+            return NoContent();
         }
     }
 }
