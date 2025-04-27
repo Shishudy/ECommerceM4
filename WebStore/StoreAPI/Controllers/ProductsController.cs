@@ -57,7 +57,7 @@ namespace StoreAPI.Controllers
 					Description = p.Description,
 					Price = p.Price,
 					InStock = p.Stock > 0,
-					IsFavorite = false ,
+					IsFavorite = false,
 					MainImage = p.FkImages
 						.Select(img => new ImageDTO
 						{
@@ -79,7 +79,7 @@ namespace StoreAPI.Controllers
 				.Where(p => p.Toggle == true)
 				.Where(p => p.Ean == ean)
 				.AsQueryable();
-			
+
 			DateOnly today = DateOnly.FromDateTime(DateTime.UtcNow);
 
 			ProductPageDTO? product = await query
@@ -142,18 +142,48 @@ namespace StoreAPI.Controllers
 				})
 				.FirstOrDefaultAsync();
 
-			if (product == null)
-				return NotFound();
+			//if (product == null)
+			//	return NotFound();
 
-			var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+			//var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-			if (!string.IsNullOrEmpty(userId))
-			{
-				product.IsFavorite = await _context.Favourites
-					.AnyAsync(f => f.FkUser == userId && f.FkProduct == product.ProductId);
-			}
+			//if (!string.IsNullOrEmpty(userId))
+			//{
+			//	product.IsFavorite = await _context.Favourites
+			//		.AnyAsync(f => f.FkUser == userId && f.FkProduct == product.ProductId);
+			//}
 
 			return Ok(product);
 		}
-	}
+
+
+		
+		[HttpGet("/api/product")]
+		public async Task<IActionResult> GetAllProducts()
+		{
+			var products = await _context.Products
+				.Include(p => p.FkCategories)
+				.Select(p => new ProductDTO
+				{
+					ProductId = p.PkProduct,
+					Ean = p.Ean,
+					Name = p.Name,
+					Description = p.Description,
+					Price = p.Price,
+					Discount = 0,
+					InStock = p.Stock > 0,
+					IsFavorite = false,
+					MainImage = new ImageDTO
+					{
+						ImageId = p.FkImage,
+						PathImg = "no-image.png",
+						Name = "Default Image"
+					},
+					Category = p.FkCategories.FirstOrDefault() != null ? p.FkCategories.First().Name : "Uncategorized"
+				})
+				.ToListAsync();
+
+			return Ok(products);
+		}
+    }
 }
