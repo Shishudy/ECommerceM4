@@ -90,12 +90,13 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		ProductFilter = new FilterDTO {
-				MinPrice = null,
-				MaxPrice = null,
-				InStock = null
-			};
-		ProductList = await ProductService.GetProductDtoListAsync(ProductFilter, null);
+		ProductFilter = new FilterDTO
+		{
+			MinPrice = null,
+			MaxPrice = null,
+			InStock = null
+		};
+		// ProductList = await ProductService.GetProductDtoListAsync(ProductFilter, null);
 	}
 
 	private void ShowAlert()
