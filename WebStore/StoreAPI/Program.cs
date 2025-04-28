@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using StoreAPI.Areas.Identity.Data;
 using StoreLibrary.DbModels;
+using StoreLibrary.EfCoreMethods;
+
 
 
 namespace StoreAPI
@@ -22,6 +24,8 @@ namespace StoreAPI
 			var storedbConn = builder.Configuration.GetConnectionString("StoreDBConnection") ?? throw new InvalidOperationException("Connection string 'StoreDBConnection' not found.");
 
 			//Add DB contexts to services
+
+
 			builder.Services.AddDbContext<StoreDbContext>(options => options.UseSqlServer(storedbConn));
 
 			builder.Services.AddDbContext<IdentityContext>(options => options.UseSqlServer(identityConn));
@@ -30,6 +34,10 @@ namespace StoreAPI
 				.AddEntityFrameworkStores<IdentityContext>()
 				.AddDefaultTokenProviders();
 
+			builder.Services.AddDbContext<StoreDbContext>(options =>
+				options.UseSqlServer(storedbConn));
+
+			builder.Services.AddScoped<PurchaseMethods>();
 			// CORS
 			builder.Services.AddCors(options =>
 			{
@@ -42,25 +50,26 @@ namespace StoreAPI
 			// JWT
 			var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 			var key = Encoding.ASCII.GetBytes(jwtSettings["SecretKey"]);
-
-			builder.Services.AddAuthentication(options =>
-			{
-				options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-				options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-			})
-			.AddJwtBearer(options =>
-			{
-				options.TokenValidationParameters = new TokenValidationParameters
-				{
-					ValidateIssuer = true,
-					ValidateAudience = true,
-					ValidateLifetime = true,
-					ValidateIssuerSigningKey = true,
-					ValidIssuer = jwtSettings["Issuer"],
-					ValidAudience = jwtSettings["Audience"],
-					IssuerSigningKey = new SymmetricSecurityKey(key)
-				};
-			});
+			
+			// TODO Uncomment!!!!!
+			// builder.Services.AddAuthentication(options =>
+			// {
+			// 	options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+			// 	options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+			// })
+			// .AddJwtBearer(options =>
+			// {
+			// 	options.TokenValidationParameters = new TokenValidationParameters
+			// 	{
+			// 		ValidateIssuer = true,
+			// 		ValidateAudience = true,
+			// 		ValidateLifetime = true,
+			// 		ValidateIssuerSigningKey = true,
+			// 		ValidIssuer = jwtSettings["Issuer"],
+			// 		ValidAudience = jwtSettings["Audience"],
+			// 		IssuerSigningKey = new SymmetricSecurityKey(key)
+			// 	};
+			// });
 
 			builder.Services.AddAuthorization();
 			builder.Services.AddControllers();
@@ -76,11 +85,17 @@ namespace StoreAPI
 
 			if (app.Environment.IsDevelopment())
 			{
+				app.UseDeveloperExceptionPage();
+			}
+
+			if (app.Environment.IsDevelopment())
+			{
 				app.UseSwagger();
 				app.UseSwaggerUI();
 			}
-
-			app.UseAuthentication();
+			
+			// TODO Uncomment!!!!!
+			// app.UseAuthentication();
 			app.UseAuthorization();
 
 			app.MapControllers();
