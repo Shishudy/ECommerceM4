@@ -9,7 +9,7 @@ namespace WebStore.Services
 
 		public CampaignService(IHttpClientFactory factory)
 		{
-			_http = factory.CreateClient("API"); 
+			_http = factory.CreateClient("API");
 		}
 
 		public async Task<string> CreateCampaignAsync(CreateCampaignDTO dto)
@@ -24,20 +24,14 @@ namespace WebStore.Services
 			return "0";
 		}
 
-		public async Task<bool> AssociateProductsAsync(AssociateProductsDTO dto)
-		{
-			var response = await _http.PostAsJsonAsync("api/Campaign/AssociateProducts", dto);
-			return response.IsSuccessStatusCode;
-		}
-
 		public async Task<List<CampaignResponseDTO>> GetAllCampaignsAsync()
 		{
 			return await _http.GetFromJsonAsync<List<CampaignResponseDTO>>("api/Campaign");
 		}
+
 		public async Task<List<CampaignResponseDTO>> GetActiveCampaignsAsync()
 		{
 			return await _http.GetFromJsonAsync<List<CampaignResponseDTO>>("api/Campaign/active");
 		}
-
 	}
 }
