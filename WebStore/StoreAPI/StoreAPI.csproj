@@ -25,10 +25,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\Images\Campaigns\" />
-    <Folder Include="wwwroot\Images\Products\" />
-    <Folder Include="wwwroot\Images\Reviews\" />
-    <Folder Include="wwwroot\Images\Users\" />
+    <Folder Include="wwwroot\Images\Campaign\" />
+    <Folder Include="wwwroot\Images\Product\" />
+    <Folder Include="wwwroot\Images\Review\" />
+    <Folder Include="wwwroot\Images\User\" />
   </ItemGroup>
 
 </Project>

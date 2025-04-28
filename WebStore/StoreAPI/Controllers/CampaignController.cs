@@ -118,26 +118,26 @@ namespace StoreAPI.Controllers
 			}
 		}
 
-		[HttpGet("/api/product")]
-		public async Task<IActionResult> GetAllProducts()
-		{
-			var products = await _context.Products
-				.Include(p => p.FkCategories)
-				.Include(p => p.FkImageNavigation)
-				.Select(p => new ProductDTO
-				{
-					ProductId = p.PkProduct,
-					Name = p.Name,
-					Ean = p.Ean,
-					Description = p.Description,
-					Price = p.Price,
-					ImageUrl = p.FkImageNavigation.PathImg,
-					Category = p.FkCategories.FirstOrDefault() != null ? p.FkCategories.FirstOrDefault()!.Name : "Uncategorized"
-				})
-				.ToListAsync();
+		//[HttpGet("/api/product")]
+		//public async Task<IActionResult> GetAllProducts()
+		//{
+		//	var products = await _context.Products
+		//		.Include(p => p.FkCategories)
+		//		.Include(p => p.FkImageNavigation)
+		//		.Select(p => new ProductDTO
+		//		{
+		//			ProductId = p.PkProduct,
+		//			Name = p.Name,
+		//			Ean = p.Ean,
+		//			Description = p.Description,
+		//			Price = p.Price,
+		//			ImageUrl = p.FkImageNavigation.PathImg,
+		//			Category = p.FkCategories.FirstOrDefault() != null ? p.FkCategories.FirstOrDefault()!.Name : "Uncategorized"
+		//		})
+		//		.ToListAsync();
 
-			return Ok(products);
-		}
+		//	return Ok(products);
+		//}
 
 	}
 }

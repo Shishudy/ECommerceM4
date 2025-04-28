@@ -93,7 +93,7 @@ namespace StoreAPI.Controllers
 			if (productDtoList == null)
 				return NotFound();
 			
-			var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+			string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
 			if (userId != null)
 			{
@@ -184,9 +184,9 @@ namespace StoreAPI.Controllers
 			if (product == null)
 				return NotFound();
 
-			var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+			string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-			if (!string.IsNullOrEmpty(userId))
+			if (userId != null)
 			{
 				product.IsFavorite = await _context.Favourites
 					.AnyAsync(f => f.FkUser == userId && f.FkProduct == product.ProductId);
