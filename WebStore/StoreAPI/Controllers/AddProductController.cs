@@ -28,21 +28,18 @@ namespace StoreAPI.Controllers
 					productDto.ImageId <= 0 ||
 					productDto.CategoryId <= 0)
 				{
-					Console.WriteLine("Validation failed: Missing or invalid fields.");
 					return BadRequest("Invalid data provided.");
 				}
 
 				var image = await _context.Images.FirstOrDefaultAsync(i => i.PkImage == productDto.ImageId);
 				if (image == null)
 				{
-					Console.WriteLine($"Image with ID {productDto.ImageId} not found.");
 					return NotFound($"Image with ID {productDto.ImageId} not found.");
 				}
 
 				var category = await _context.Categories.FirstOrDefaultAsync(c => c.PkCategory == productDto.CategoryId);
 				if (category == null)
 				{
-					Console.WriteLine($"Category with ID {productDto.CategoryId} not found.");
 					return NotFound($"Category with ID {productDto.CategoryId} not found.");
 				}
 
@@ -51,8 +48,8 @@ namespace StoreAPI.Controllers
 					Name = productDto.Name,
 					Description = productDto.Description,
 					Price = productDto.Price,
-					Stock = productDto.Stock, 
-					Toggle = true,            
+					Stock = productDto.Stock,
+					Toggle = true,
 					Ean = productDto.Ean,
 					FkImage = productDto.ImageId,
 					FkCategories = new List<Category> { category }
@@ -60,8 +57,6 @@ namespace StoreAPI.Controllers
 
 				_context.Products.Add(product);
 				await _context.SaveChangesAsync();
-
-				Console.WriteLine($"Product added successfully. Product ID: {product.PkProduct}");
 
 				return Ok(new
 				{
@@ -76,12 +71,6 @@ namespace StoreAPI.Controllers
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine("========== ERROR ==========");
-				Console.WriteLine($"Message: {ex.Message}");
-				Console.WriteLine($"Source: {ex.Source}");
-				Console.WriteLine($"StackTrace: {ex.StackTrace}");
-				Console.WriteLine("============================");
-
 				return StatusCode(500, $"Internal server error: {ex.Message}");
 			}
 		}
