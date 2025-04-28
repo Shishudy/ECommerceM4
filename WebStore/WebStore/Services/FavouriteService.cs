@@ -20,7 +20,7 @@ namespace WebStore.Services
 			_http = factory.CreateClient("API");
 		}
 
-		public async Task<string?> UpdateFavourite(int productId)
+		public async Task<string> UpdateFavourite(int productId)
 		{
 			var response = await _http.PostAsync($"api/favourites/toggle/{productId}", null);
 

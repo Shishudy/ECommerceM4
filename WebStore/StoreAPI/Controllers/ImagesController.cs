@@ -125,7 +125,7 @@ public class ImagesController: ControllerBase
 	}
 
 	[HttpPost("{imageCategory}/{ownerId}")]
-	public async Task<IActionResult> UploadImage(ImageCategory imageCategory, int ownerId, [FromForm] IFormFile file, [FromForm] string? name)
+	public async Task<IActionResult> UploadImage(ImageCategory imageCategory, int ownerId, IFormFile file, [FromForm] string? name)
 	{
 		if (file == null || file.Length == 0)
 			return BadRequest("Nenhum ficheiro enviado.");
@@ -143,7 +143,7 @@ public class ImagesController: ControllerBase
 			Directory.CreateDirectory(ownerFolderPath);
 
 		string originalName = Path.GetFileNameWithoutExtension(file.FileName);
-		string uniqueSuffix = Guid.NewGuid().ToString("R").Substring(0, 5);
+		string uniqueSuffix = Guid.NewGuid().ToString("N").Substring(0, 5);
 		string finalFileName = $"{originalName}_{uniqueSuffix}{extension}";
 		string finalPath = Path.Combine(ownerFolderPath, finalFileName);
 
@@ -290,7 +290,7 @@ public class ImagesController: ControllerBase
 	}
 
 	//[HttpPut("{imageCategory}/{ownerId}/{imageId}")]
-	//public async Task<IActionResult> UpdateImage(ImageCategory imageCategory, int ownerId, int imageId, [FromForm] IFormFile file, [FromForm] string? name)
+	//public async Task<IActionResult> UpdateImage(ImageCategory imageCategory, int ownerId, int imageId, IFormFile file, [FromForm] string? name)
 	//{
 	//	var image = await _context.Images.FindAsync(imageId);
 

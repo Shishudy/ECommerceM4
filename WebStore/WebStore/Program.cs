@@ -36,6 +36,7 @@ builder.Services.AddScoped<CampaignService>();
 builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<FavouriteService>();
 builder.Services.AddScoped<CategoryService>();
+builder.Services.AddScoped<ImageService>();
 
 var app = builder.Build();
 

@@ -69,7 +69,25 @@ namespace StoreAPI.Controllers
 				})
 				.ToListAsync();
 
-			return Ok(products);
+			if (productDtoList == null)
+				return NotFound();
+			
+			var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+			if (userId != null)
+			{
+				List<int> favoriteProductIds = await _context.Favourites
+					.Where(f => f.FkUser == userId)
+					.Select(f => f.FkProduct)
+					.ToListAsync();
+
+				foreach (ProductDTO productDto in productDtoList)
+				{
+					productDto.IsFavorite = favoriteProductIds.Contains(productDto.ProductId);
+				}
+			}
+
+			return Ok(productDtoList);
 		}
 
 		[HttpGet("product/{ean}")]
@@ -145,13 +163,13 @@ namespace StoreAPI.Controllers
 			//if (product == null)
 			//	return NotFound();
 
-			//var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+			var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-			//if (!string.IsNullOrEmpty(userId))
-			//{
-			//	product.IsFavorite = await _context.Favourites
-			//		.AnyAsync(f => f.FkUser == userId && f.FkProduct == product.ProductId);
-			//}
+			if (!string.IsNullOrEmpty(userId))
+			{
+				product.IsFavorite = await _context.Favourites
+					.AnyAsync(f => f.FkUser == userId && f.FkProduct == product.ProductId);
+			}
 
 			return Ok(product);
 		}

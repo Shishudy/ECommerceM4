@@ -30,9 +30,6 @@ namespace StoreAPI
 				.AddEntityFrameworkStores<IdentityContext>()
 				.AddDefaultTokenProviders();
 
-			builder.Services.AddDbContext<StoreDbContext>(options =>
-				options.UseSqlServer(storedbConn));
-
 			// CORS
 			builder.Services.AddCors(options =>
 			{
