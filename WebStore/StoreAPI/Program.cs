@@ -21,23 +21,21 @@ namespace StoreAPI
 			var identityConn = builder.Configuration.GetConnectionString("IdentityContextConnection")
 							   ?? throw new InvalidOperationException("Missing Identity connection string.");
 
-			var storedbConn = builder.Configuration.GetConnectionString("StoreDBConnection") ?? throw new InvalidOperationException("Connection string 'StoreDBConnection' not found.");
+			// Get the connection string from appsettings.json
+			var storedbConn = builder.Configuration.GetConnectionString("StoreDBConnection") 
+								?? throw new InvalidOperationException("Missing StoreDB connection string.");
 
+			// Add DbContext to the service container
 			//Add DB contexts to services
-
-
 			builder.Services.AddDbContext<StoreDbContext>(options => options.UseSqlServer(storedbConn));
-
 			builder.Services.AddDbContext<IdentityContext>(options => options.UseSqlServer(identityConn));
+			
+			builder.Services.AddScoped<PurchaseMethods>();
 
 			builder.Services.AddIdentity<IdentityUser, IdentityRole>()
 				.AddEntityFrameworkStores<IdentityContext>()
 				.AddDefaultTokenProviders();
 
-			builder.Services.AddDbContext<StoreDbContext>(options =>
-				options.UseSqlServer(storedbConn));
-
-			builder.Services.AddScoped<PurchaseMethods>();
 			// CORS
 			builder.Services.AddCors(options =>
 			{
@@ -52,24 +50,24 @@ namespace StoreAPI
 			var key = Encoding.ASCII.GetBytes(jwtSettings["SecretKey"]);
 			
 			// TODO Uncomment!!!!!
-			// builder.Services.AddAuthentication(options =>
-			// {
-			// 	options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-			// 	options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-			// })
-			// .AddJwtBearer(options =>
-			// {
-			// 	options.TokenValidationParameters = new TokenValidationParameters
-			// 	{
-			// 		ValidateIssuer = true,
-			// 		ValidateAudience = true,
-			// 		ValidateLifetime = true,
-			// 		ValidateIssuerSigningKey = true,
-			// 		ValidIssuer = jwtSettings["Issuer"],
-			// 		ValidAudience = jwtSettings["Audience"],
-			// 		IssuerSigningKey = new SymmetricSecurityKey(key)
-			// 	};
-			// });
+			builder.Services.AddAuthentication(options =>
+			{
+				options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+				options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+			})
+			.AddJwtBearer(options =>
+			{
+				options.TokenValidationParameters = new TokenValidationParameters
+				{
+					ValidateIssuer = true,
+					ValidateAudience = true,
+					ValidateLifetime = true,
+					ValidateIssuerSigningKey = true,
+					ValidIssuer = jwtSettings["Issuer"],
+					ValidAudience = jwtSettings["Audience"],
+					IssuerSigningKey = new SymmetricSecurityKey(key)
+				};
+			});
 
 			builder.Services.AddAuthorization();
 			builder.Services.AddControllers();
@@ -95,7 +93,7 @@ namespace StoreAPI
 			}
 			
 			// TODO Uncomment!!!!!
-			// app.UseAuthentication();
+			app.UseAuthentication();
 			app.UseAuthorization();
 
 			app.MapControllers();
