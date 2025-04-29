@@ -1,4 +1,4 @@
-﻿using System.Net.Http.Headers;
+using System.Net.Http.Headers;
 using StoreLibrary.Models;
 
 public class ImageService
@@ -22,7 +22,7 @@ public class ImageService
 		return null;
 	}
 
-	public async Task<string?> UploadImageAsync(ImageCategory category, int ownerId, Stream fileStream, string originalFileName, string? name = null)
+	public async Task<string> UploadImageAsync(ImageCategory category, int ownerId, Stream fileStream, string originalFileName, string? name = null)
 	{
 		var content = new MultipartFormDataContent();
 
@@ -38,7 +38,7 @@ public class ImageService
 
 		var response = await _http.PostAsync($"api/images/{category}/{ownerId}", content);
 
-		return await response.Content.ReadFromJsonAsync<string>();
+		return await response.Content.ReadAsStringAsync();
 	}
 
 	//public async Task<string?> UpdateImageAsync(ImageCategory category, int ownerId, int imageId, Stream fileStream, string originalFileName, string? name = null)
