@@ -1,4 +1,5 @@
 ﻿@inject HttpClient Http
+@inject CardService CardService
 
 @page "/finalizarcompra"
 @rendermode InteractiveServer
@@ -13,7 +14,7 @@
                             <RadzenLabel Text="Credit Card" Component="CardId" />
                         </RadzenColumn>
                         <RadzenColumn Size="12" SizeMD="8">
-                            <RadzenDropDown @bind-Value="order.CardId" AllowClear="true" Placeholder="Select something" Data="@cards" Style="width: 100%;" TextProperty="CardNr" ValueProperty="CardId" Name="CardId"></RadzenDropDown>
+                            <RadzenDropDown @bind-Value="order.PkCard" AllowClear="true" Placeholder="Select something" Data="@cards" Style="width: 100%;" TextProperty="Number" ValueProperty="PkCard" Name="CardId"></RadzenDropDown>
                         </RadzenColumn>
                     </RadzenRow>
                     <RadzenRow AlignItems="AlignItems.Center">
@@ -21,7 +22,15 @@
                             <RadzenLabel Text="Card #" Component="CardNr"/>
                         </RadzenColumn>
                         <RadzenColumn Size="12" SizeMD="8">
-                            <RadzenTextBox @bind-Value="order.CardNr" Style="width: 100%;" Name="CardNr" />
+                            <RadzenNumeric @bind-Value="order.Number" Style="width: 100%;" Name="CardNr" />
+                        </RadzenColumn>
+                    </RadzenRow>
+                    <RadzenRow AlignItems="AlignItems.Center">
+                        <RadzenColumn Size="12" SizeMD="4">
+                            <RadzenLabel Text="CVV" Component="CardCVV" />
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="8">
+                            <RadzenNumeric @bind-Value="order.Code" Style="width: 100%;" Name="CardCVV" Min="100" Max="999" />
                         </RadzenColumn>
                     </RadzenRow>
                     <RadzenRow AlignItems="AlignItems.Center">
@@ -29,7 +38,7 @@
                             <RadzenLabel Text="Expiry Date" Component="ExpiryDate"/>
                         </RadzenColumn>
                         <RadzenColumn Size="12" SizeMD="8">
-                            <RadzenDatePicker @bind-Value="order.ExpiryDate" Style="width: 100%;" Name="ExpiryDate" />
+                            <RadzenDatePicker @bind-Value="order.Expiration" Style="width: 100%;" Name="ExpiryDate" />
                         </RadzenColumn>
                     </RadzenRow>
                     <RadzenRow AlignItems="AlignItems.Center">
@@ -37,7 +46,7 @@
                             <RadzenLabel Text="Cardholder" Component="CardHolder"/>
                         </RadzenColumn>
                         <RadzenColumn Size="12" SizeMD="8">
-                            <RadzenTextBox @bind-Value="order.CardHolder" Style="width: 100%;" Name="CardHolder" />
+                            <RadzenTextBox @bind-Value="order.Name" Style="width: 100%;" Name="CardHolder" />
                         </RadzenColumn>
                     </RadzenRow>
                     <RadzenButton Text="Save" Click="SaveOrder" Style="margin-top: 1rem;" />
@@ -48,56 +57,21 @@
 </RadzenRow>
 
 @code {
-    public class Order
-    {
-        public int CardId { get; set; }
-        public string CardNr { get; set; }
-        public DateTime ExpiryDate { get; set; }
-        public string CardHolder { get; set; }
-        public string Name { get; set; }
-        public string Address1 { get; set; }
-        public string Address2 { get; set; }
-        public string City { get; set; }
-        public string State { get; set; }
-        public string Zip { get; set; }
-        public int Country { get; set; }
-        public int StoreId { get; set; }
-        public string Warehouse { get; set; }
-        public string Region { get; set; }
-        public string System { get; set; }
-        public int TransId { get; set; }
-        public string Register { get; set; }
-        public string Clerk { get; set; }
-        public decimal Amount { get; set; }
-        public decimal Tax { get; set; }
-        public DateTime OrderDate { get; set; }
-        public DateTime ShipDate { get; set; }
-    }
 
-    public class CreditCard
-    {
-        public int CardId { get; set; }
-        public string CardNr { get; set; }
-    }
+    List<Card> cards = new List<Card>();
 
-    List<CreditCard> cards = new List<CreditCard>();
-    Order order = new Order()
-    {
-        ExpiryDate = DateTime.Now.AddYears(1),
-        OrderDate = DateTime.Now,
-        ShipDate = DateTime.Now.AddDays(7)
-    };
+    Card order = new Card();
+    string userId = "someUserId"; // Replace with actual user ID logic
 
     protected override async Task OnInitializedAsync()
     {
         await LoadCreditCards();
     }
-
     private async Task LoadCreditCards()
     {
         try
         {
-            cards = await Http.GetFromJsonAsync<List<CreditCard>>("api/CreditCard");
+            cards = await CardService.GetCardsByUserIDAsync(userId);
         }
         catch (Exception ex)
         {
@@ -109,15 +83,7 @@
     {
         try
         {
-            var response = await Http.PostAsJsonAsync("api/Order", order);
-            if (response.IsSuccessStatusCode)
-            {
-                Console.WriteLine("Order saved successfully.");
-            }
-            else
-            {
-                Console.WriteLine($"Error saving order: {response.ReasonPhrase}");
-            }
+            await CardService.AddCardToPurchaseAsync(userId, order);
         }
         catch (Exception ex)
         {

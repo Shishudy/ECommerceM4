@@ -2,7 +2,9 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Radzen;
 using WebStore;
+using System.Reflection;
 using WebStore.Services;
+
 using WebStore.Components;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,6 +39,18 @@ builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<FavouriteService>();
 builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<ImageService>();
+
+
+// Dynamically register all services in the Services folder
+
+builder.Services.AddScoped<AddressInvoiceService>();
+builder.Services.AddScoped<AddressShipmentService>();
+builder.Services.AddScoped<CardService>();
+builder.Services.AddScoped<CartService>();
+builder.Services.AddScoped<InvoiceService>();
+builder.Services.AddScoped<PurchaseService>();
+
+
 
 var app = builder.Build();
 

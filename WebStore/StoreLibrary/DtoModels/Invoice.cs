@@ -7,14 +7,10 @@ namespace StoreLibrary.DbModels
     public partial class DTOInvoice
     {
         public int PkInvoice { get; set; }
-        public int FkAddressInvoice { get; set; }
         public string Name { get; set; } = null!;
         public int Nif { get; set; }
         public DateOnly DateInvoice { get; set; }
-        public string? PaypallConfirmation { get; set; }
         public double? Amount { get; set; }
-        public virtual Address FkAddressInvoiceNavigation { get; set; } = null!;
-        public virtual ICollection<Purchase> Purchases { get; set; } = new List<Purchase>();
     }
 
     // Invoice class
@@ -34,21 +30,18 @@ namespace StoreLibrary.DbModels
             Amount = invoice.Amount;
             FkAddressInvoiceNavigation = invoice.FkAddressInvoiceNavigation;
             Purchases = invoice.Purchases;
-        }
+        } // Use: new Invoice(existingInvoice);
 
         // Method to assign values from another Invoice object
         public void AssignFrom(Invoice invoice)
         {
             PkInvoice = invoice.PkInvoice;
-            FkAddressInvoice = invoice.FkAddressInvoice;
             Name = invoice.Name;
             Nif = invoice.Nif;
             DateInvoice = invoice.DateInvoice;
             PaypallConfirmation = invoice.PaypallConfirmation;
             Amount = invoice.Amount;
-            FkAddressInvoiceNavigation = invoice.FkAddressInvoiceNavigation;
-            Purchases = invoice.Purchases;
-        }
+        } // Use: existingInvoice.AssignFrom(newInvoice);
 
         // Explicit conversion from DTOInvoice to Invoice
         public static explicit operator Invoice(DTOInvoice dto)
@@ -56,16 +49,12 @@ namespace StoreLibrary.DbModels
             return new Invoice
             {
                 PkInvoice = dto.PkInvoice,
-                //FkAddressInvoice = dto.FkAddressInvoice,
                 Name = dto.Name,
                 Nif = dto.Nif,
                 DateInvoice = dto.DateInvoice,
-                PaypallConfirmation = dto.PaypallConfirmation,
                 Amount = dto.Amount,
-                FkAddressInvoiceNavigation = dto.FkAddressInvoiceNavigation,
-                Purchases = dto.Purchases
             };
-        }
+        } // Use: new Invoice(dto);
 
         // Explicit conversion from Invoice to DTOInvoice
         public static explicit operator DTOInvoice(Invoice invoice)
@@ -73,15 +62,11 @@ namespace StoreLibrary.DbModels
             return new DTOInvoice
             {
                 PkInvoice = invoice.PkInvoice,
-                FkAddressInvoice = invoice.FkAddressInvoice,
                 Name = invoice.Name,
                 Nif = invoice.Nif,
                 DateInvoice = invoice.DateInvoice,
-                PaypallConfirmation = invoice.PaypallConfirmation,
                 Amount = invoice.Amount,
-                FkAddressInvoiceNavigation = invoice.FkAddressInvoiceNavigation,
-                Purchases = invoice.Purchases
             };
-        }
+        } // Use: new DTOInvoice(invoice);
     }
 }

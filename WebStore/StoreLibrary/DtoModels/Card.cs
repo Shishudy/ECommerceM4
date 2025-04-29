@@ -7,11 +7,20 @@ namespace StoreLibrary.DbModels
     // DTOCard class
     public partial class DTOCard
     {
-        public long? Number { get; set; }
-        public DateOnly? Expiration { get; set; }
-        public int? Code { get; set; }
-        public string? Name { get; set; }
-        public bool? Toogle { get; set; }
+    public int PkCard { get; set; }
+
+    public string FkUser { get; set; } = null!;
+
+    public long? Number { get; set; }
+
+    public DateOnly? Expiration { get; set; }
+
+    public int? Code { get; set; }
+
+    public string? Name { get; set; }
+
+    public bool? Toogle { get; set; }
+
     }
 
     // Card class

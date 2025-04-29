@@ -21,7 +21,7 @@ namespace StoreAPI.Controllers
         [HttpGet("{fk_user}/items")]
         public async Task<IActionResult> GetCartItemsByUserID(string fk_user)
         {
-            var items = await _purchaseMethods.GetCartItemsByUserIDAsync(fk_user);
+            List<PurchaseProduct> items = await _purchaseMethods.GetCartItemsByUserIDAsync(fk_user);
             if (items == null || !items.Any())
                 return NotFound("No items found in the cart for the specified user.");
             return Ok(items);
