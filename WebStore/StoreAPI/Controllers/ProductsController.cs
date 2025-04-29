@@ -114,75 +114,77 @@ namespace StoreAPI.Controllers
 		[HttpGet("product/{ean}")]
 		public async Task<ActionResult<ProductPageDTO>> GetProductPage(string ean)
 		{
-			var query = _context.Products
-				.Where(p => p.Toggle == true)
-				.Where(p => p.Ean == ean)
-				.AsQueryable();
-			
-			DateOnly today = DateOnly.FromDateTime(DateTime.UtcNow);
-
-			ProductPageDTO? product = await query
-				.Select(p => new ProductPageDTO
-				{
-					ProductId = p.PkProduct,
-					Ean = p.Ean,
-					Name = p.Name,
-					Description = p.Description,
-					Price = p.Price,
-					InStock = p.Stock > 0,
-					Discount = p.CampaignProducts
-						.Where(cp =>
-							cp.FkCampaignNavigation.DateStart <= today &&
-							cp.FkCampaignNavigation.DateEnd >= today)
-						.OrderByDescending(cp => cp.FkCampaignNavigation.DateStart)
-						.Select(cp => cp.Discount)
-						.FirstOrDefault(),
-					Category = p.FkCategories
-						.OrderBy(c => c.PkCategory)
-						.Select(c => c.Name)
-						.FirstOrDefault() ?? string.Empty,
-					IsFavorite = false,
-					MainImage = p.FkImages
-						.Select(img => new ImageDTO
-						{
-							ImageId = img.PkImage,
-							PathImg = img.PathImg,
-							Name = img.Name
-						})
-						.FirstOrDefault() ?? new ImageDTO(),
-					ImageDTOList = p.FkImages
-						.Where(img => img.PkImage != p.FkImage)
-						.Select(img => new ImageDTO
-						{
-							ImageId = img.PkImage,
-							PathImg = img.PathImg,
-							Name = img.Name
-						})
-						.ToList(),
-					ReviewDTOList = p.PurchaseProducts
-						.Where(pp => pp.FkReviewNavigation != null)
-						.Select(pp => new ReviewDTO
-						{
-							ReviewId = pp.FkReviewNavigation.PkReview,
-							ReviewDate = pp.FkReviewNavigation.DataReview,
-							Stars = pp.FkReviewNavigation.Stars,
-							Comment = pp.FkReviewNavigation.Comment,
-							ImageDTOList = pp.FkReviewNavigation.FkImages
-								.Select(img => new ImageDTO
-								{
-									ImageId = img.PkImage,
-									PathImg = img.PathImg,
-									Name = img.Name
-								})
-								.ToList()
-						})
-						.Distinct()
-						.ToList()
-				})
+			Product? productEntity = await _context.Products
+				.Where(p => p.Toggle && p.Ean == ean)
+				.Include(p => p.FkCategories)
+				.Include(p => p.FkImages)
+				.Include(p => p.CampaignProducts)
+					.ThenInclude(cp => cp.FkCampaignNavigation)
+				.Include(p => p.PurchaseProducts)
+					.ThenInclude(pp => pp.FkReviewNavigation)
+						.ThenInclude(r => r.FkImages)
 				.FirstOrDefaultAsync();
 
-			if (product == null)
+			if (productEntity == null)
 				return NotFound();
+
+			DateOnly today = DateOnly.FromDateTime(DateTime.UtcNow);
+
+			ProductPageDTO product = new ProductPageDTO
+			{
+				ProductId = productEntity.PkProduct,
+				Ean = productEntity.Ean,
+				Name = productEntity.Name,
+				Description = productEntity.Description,
+				Price = productEntity.Price,
+				InStock = productEntity.Stock > 0,
+				Discount = productEntity.CampaignProducts
+					.Where(cp => cp.FkCampaignNavigation != null &&
+								 cp.FkCampaignNavigation.DateStart <= today &&
+								 cp.FkCampaignNavigation.DateEnd >= today)
+					.OrderByDescending(cp => cp.FkCampaignNavigation.DateStart)
+					.Select(cp => cp.Discount)
+					.FirstOrDefault(),
+				Category = productEntity.FkCategories
+					.OrderBy(c => c.PkCategory)
+					.Select(c => c.Name)
+					.FirstOrDefault() ?? string.Empty,
+				IsFavorite = false,
+				MainImage = productEntity.FkImages
+					.Select(img => new ImageDTO
+					{
+						ImageId = img.PkImage,
+						PathImg = img.PathImg,
+						Name = img.Name
+					})
+					.FirstOrDefault() ?? new ImageDTO(),
+				ImageDTOList = productEntity.FkImages
+					.Where(img => img.PkImage != productEntity.FkImage)
+					.Select(img => new ImageDTO
+					{
+						ImageId = img.PkImage,
+						PathImg = img.PathImg,
+						Name = img.Name
+					})
+					.ToList(),
+				ReviewDTOList = productEntity.PurchaseProducts
+					.Where(pp => pp.FkReviewNavigation != null)
+					.Select(pp => new ReviewDTO
+					{
+						ReviewId = pp.FkReviewNavigation.PkReview,
+						ReviewDate = pp.FkReviewNavigation.DataReview,
+						Stars = pp.FkReviewNavigation.Stars,
+						Comment = pp.FkReviewNavigation.Comment,
+						ImageDTOList = pp.FkReviewNavigation.FkImages?.Select(img => new ImageDTO
+						{
+							ImageId = img.PkImage,
+							PathImg = img.PathImg,
+							Name = img.Name
+						}).ToList() ?? new List<ImageDTO>()
+					})
+					.Distinct()
+					.ToList()
+			};
 
 			string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 

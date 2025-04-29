@@ -65,9 +65,4 @@ public class ImageService
 		var response = await _http.DeleteAsync($"api/images/{imageId}");
 		return response.IsSuccessStatusCode;
 	}
-
-	private class UploadImageResponse
-	{
-		public string Path { get; set; } = string.Empty;
-	}
 }
