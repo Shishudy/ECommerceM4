@@ -39,6 +39,9 @@ builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<FavouriteService>();
 builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<ImageService>();
+builder.Services.AddScoped<AddProductService>();
+builder.Services.AddScoped<SearchService>();
+
 
 
 // Dynamically register all services in the Services folder

@@ -22,7 +22,7 @@ namespace WebStore.Services
 
 		public async Task<string> UpdateFavourite(int productId)
 		{
-			var response = await _http.PostAsync($"api/favourites/toggle/{productId}", null);
+			var response = await _http.PostAsync($"api/favourites/{productId}", null);
 
 			return await response.Content.ReadAsStringAsync();
 		}

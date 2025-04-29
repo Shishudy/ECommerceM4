@@ -1,14 +1,17 @@
-﻿@rendermode InteractiveServer
+﻿@inject SearchService SearchService
+@rendermode InteractiveServer
 
 <div id="search">
-    <form>
+	<form @onsubmit="SearchSubmit">
         <input type="text"
                placeholder="Pesquisar..."
-               @bind="SearchTerm"
-               @bind:event="oninput" />
+			   @bind="SearchService.SearchTerm" />
     </form>
 </div>
 
 @code {
-    private string SearchTerm = "";
+	private async Task SearchSubmit()
+	{
+		SearchService.TriggerSearch();
+	}
 }
