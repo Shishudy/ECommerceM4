@@ -43,9 +43,6 @@ public partial class StoreDbContext : DbContext
 
     public virtual DbSet<UserImage> UserImages { get; set; }
 
-    // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    //     => optionsBuilder.UseSqlServer("Server=64.20.37.138;Database=StoreDB;User Id=webstore-main;Password=f9n5B$2g6;TrustServerCertificate=True;MultipleActiveResultSets=true;");
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Address>(entity =>

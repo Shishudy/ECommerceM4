@@ -49,7 +49,6 @@ namespace StoreAPI
 			var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 			var key = Encoding.ASCII.GetBytes(jwtSettings["SecretKey"]);
 			
-			// TODO Uncomment!!!!!
 			builder.Services.AddAuthentication(options =>
 			{
 				options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -76,7 +75,6 @@ namespace StoreAPI
 
 			var app = builder.Build();
 
-			// Add custom exception middleware
 			app.UseMiddleware<ExceptionMiddleware>();
 
 			app.UseCors("AllowAll");
@@ -92,7 +90,6 @@ namespace StoreAPI
 				app.UseSwaggerUI();
 			}
 			
-			// TODO Uncomment!!!!!
 			app.UseAuthentication();
 			app.UseAuthorization();
 
