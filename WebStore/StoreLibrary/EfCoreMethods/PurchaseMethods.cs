@@ -123,6 +123,7 @@ namespace StoreLibrary.EfCoreMethods
             await _context.SaveChangesAsync();
         }
 
+
         public async Task RemoveItemFromCartAsync(string fk_user, int productId)
         {
             var cart = await GetCartByUserIDAsync(fk_user);

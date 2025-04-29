@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +11,7 @@ namespace StoreAPI.Controllers
 {
 	[Route("api/products")]
 	[ApiController]
-	public class ProductsController: ControllerBase
+	public class ProductsController : ControllerBase
 	{
 		private readonly StoreDbContext _context;
 
@@ -78,7 +78,7 @@ namespace StoreAPI.Controllers
 						.Select(cp => cp.Discount)
 						.FirstOrDefault(),
 					InStock = p.Stock > 0,
-					IsFavorite = false ,
+					IsFavorite = false,
 					MainImage = p.FkImages
 						.Select(img => new ImageDTO
 						{
@@ -92,7 +92,7 @@ namespace StoreAPI.Controllers
 
 			if (productDtoList == null)
 				return NotFound();
-			
+
 			string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
 			if (userId != null)

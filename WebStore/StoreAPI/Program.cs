@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using StoreAPI.Areas.Identity.Data;
 using StoreLibrary.DbModels;
+using StoreLibrary.EfCoreMethods;
+
 
 
 namespace StoreAPI
@@ -19,12 +21,16 @@ namespace StoreAPI
 			var identityConn = builder.Configuration.GetConnectionString("IdentityContextConnection")
 							   ?? throw new InvalidOperationException("Missing Identity connection string.");
 
-			var storedbConn = builder.Configuration.GetConnectionString("StoreDBConnection") ?? throw new InvalidOperationException("Connection string 'StoreDBConnection' not found.");
+			// Get the connection string from appsettings.json
+			var storedbConn = builder.Configuration.GetConnectionString("StoreDBConnection") 
+								?? throw new InvalidOperationException("Missing StoreDB connection string.");
 
+			// Add DbContext to the service container
 			//Add DB contexts to services
 			builder.Services.AddDbContext<StoreDbContext>(options => options.UseSqlServer(storedbConn));
-
 			builder.Services.AddDbContext<IdentityContext>(options => options.UseSqlServer(identityConn));
+			
+			builder.Services.AddScoped<PurchaseMethods>();
 
 			builder.Services.AddIdentity<IdentityUser, IdentityRole>()
 				.AddEntityFrameworkStores<IdentityContext>()
@@ -42,7 +48,8 @@ namespace StoreAPI
 			// JWT
 			var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 			var key = Encoding.ASCII.GetBytes(jwtSettings["SecretKey"]);
-
+			
+			// TODO Uncomment!!!!!
 			builder.Services.AddAuthentication(options =>
 			{
 				options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -76,10 +83,16 @@ namespace StoreAPI
 
 			if (app.Environment.IsDevelopment())
 			{
+				app.UseDeveloperExceptionPage();
+			}
+
+			if (app.Environment.IsDevelopment())
+			{
 				app.UseSwagger();
 				app.UseSwaggerUI();
 			}
-
+			
+			// TODO Uncomment!!!!!
 			app.UseAuthentication();
 			app.UseAuthorization();
 

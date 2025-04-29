@@ -7,7 +7,7 @@ namespace StoreLibrary.DbModels
     public partial class DTOInvoice
     {
         public int PkInvoice { get; set; }
-        public int? FkAddressInvoice { get; set; }
+        public int FkAddressInvoice { get; set; }
         public string Name { get; set; } = null!;
         public int Nif { get; set; }
         public DateOnly DateInvoice { get; set; }
@@ -56,7 +56,7 @@ namespace StoreLibrary.DbModels
             return new Invoice
             {
                 PkInvoice = dto.PkInvoice,
-                FkAddressInvoice = dto.FkAddressInvoice,
+                //FkAddressInvoice = dto.FkAddressInvoice,
                 Name = dto.Name,
                 Nif = dto.Nif,
                 DateInvoice = dto.DateInvoice,

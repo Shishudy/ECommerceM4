@@ -12,7 +12,7 @@
 }
 else
 {
-    <h3>Associate Products to Campaign</h3>
+    <h3>Select Products for Campaign</h3>
 
     <RadzenDropDown @bind-Value="selectedCampaignId"
                     Data="activeCampaigns"
@@ -80,16 +80,16 @@ else
     </div>
 
     <div style="margin-top: 2rem; border: 1px solid #ccc; padding: 1rem;">
-        <h4>Finalize Association</h4>
+        <h4>Finalize Selection</h4>
 
         <RadzenNumeric TValue="int" @bind-Value="baseDiscount"
                        Placeholder="Base Discount"
                        Style="width: 100%; margin-bottom: 1rem;" />
 
-        <RadzenButton Text="Confirm Association"
+        <RadzenButton Text="Finalize"
                       Icon="check"
                       ButtonStyle="ButtonStyle.Success"
-                      Click="@ConfirmAssociationAsync"
+                      Click="@FinalizeSelectionAsync"
                       Style="width: 100%;" />
     </div>
 }
@@ -109,7 +109,15 @@ else
         try
         {
             activeCampaigns = await CampaignService.GetActiveCampaignsAsync() ?? new();
-            products = await ProductService.GetProductDtoListAsync() ?? new();
+            products = await ProductService.GetProductDtoListAsync(
+                category: null,
+                filter: new FilterDTO { InStock = true },
+                search: null
+            ) ?? new();
+
+            products = products
+                .Where(p => !selectedProducts.Any(sp => sp.Product.ProductId == p.ProductId))
+                .ToList();
         }
         catch (Exception ex)
         {
@@ -144,35 +152,16 @@ else
         }
     }
 
-    private async Task ConfirmAssociationAsync()
+    private async Task FinalizeSelectionAsync()
     {
         if (selectedCampaignId == 0 || !selectedProducts.Any())
         {
             await JS.InvokeVoidAsync("alert", "Select a campaign and at least one product.");
             return;
         }
+        await JS.InvokeVoidAsync("alert", "Products selected successfully!");
 
-        var dto = new AssociateProductsDTO
-            {
-                CampaignId = selectedCampaignId,
-                Products = selectedProducts.Select(p => new ProductDiscount
-                {
-                    ProductId = p.Product.ProductId,
-                    Discount = p.CustomDiscount ?? baseDiscount
-                }).ToList()
-            };
-
-        var success = await CampaignService.AssociateProductsAsync(dto);
-
-        if (success)
-        {
-            await JS.InvokeVoidAsync("alert", "Products successfully associated!");
-            DialogService.Close(true);
-        }
-        else
-        {
-            await JS.InvokeVoidAsync("alert", "Error associating products.");
-        }
+        DialogService.Close(true);
     }
 
     private class SelectedProductItem

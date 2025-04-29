@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using StoreLibrary.DbModels;
 using Microsoft.EntityFrameworkCore;
 using StoreLibrary.DTOs.Campaigns;
@@ -25,11 +25,8 @@ namespace StoreAPI.Controllers
 				return BadRequest("Invalid data.");
 			}
 
-			int nextId = (_context.Campaigns.Any() ? _context.Campaigns.Max(c => c.PkCampaign) : 0) + 1;
-
 			var campaign = new Campaign
 			{
-				PkCampaign = nextId,
 				Name = dto.Name,
 				DateStart = dto.DateStart,
 				DateEnd = dto.DateEnd
@@ -40,6 +37,7 @@ namespace StoreAPI.Controllers
 
 			return Ok(new { message = "Campaign created successfully!", id = campaign.PkCampaign });
 		}
+
 
 		[HttpGet]
 		public async Task<IActionResult> GetCampaigns()
