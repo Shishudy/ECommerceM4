@@ -14,10 +14,12 @@ namespace StoreAPI.Controllers
 	public class ProductsController : ControllerBase
 	{
 		private readonly StoreDbContext _context;
+		private readonly IWebHostEnvironment _env;
 
-		public ProductsController(StoreDbContext context)
+		public ProductsController(StoreDbContext context, IWebHostEnvironment env)
 		{
 			_context = context;
+			_env = env;
 		}
 
 		// GET: api/products/category/tecnologia
@@ -83,7 +85,7 @@ namespace StoreAPI.Controllers
 						.Select(img => new ImageDTO
 						{
 							ImageId = img.PkImage,
-							PathImg = img.PathImg,
+							PathImg = Path.Combine(_env.WebRootPath, img.PathImg.Substring(1)),
 							Name = img.Name
 						})
 						.FirstOrDefault() ?? new ImageDTO()
@@ -154,7 +156,7 @@ namespace StoreAPI.Controllers
 					.Select(img => new ImageDTO
 					{
 						ImageId = img.PkImage,
-						PathImg = img.PathImg,
+						PathImg = Path.Combine(_env.WebRootPath, img.PathImg.Substring(1)),
 						Name = img.Name
 					})
 					.FirstOrDefault() ?? new ImageDTO(),
@@ -163,7 +165,7 @@ namespace StoreAPI.Controllers
 					.Select(img => new ImageDTO
 					{
 						ImageId = img.PkImage,
-						PathImg = img.PathImg,
+						PathImg = Path.Combine(_env.WebRootPath, img.PathImg.Substring(1)),
 						Name = img.Name
 					})
 					.ToList(),
@@ -178,7 +180,7 @@ namespace StoreAPI.Controllers
 						ImageDTOList = pp.FkReviewNavigation.FkImages?.Select(img => new ImageDTO
 						{
 							ImageId = img.PkImage,
-							PathImg = img.PathImg,
+							PathImg = Path.Combine(_env.WebRootPath, img.PathImg.Substring(1)),
 							Name = img.Name
 						}).ToList() ?? new List<ImageDTO>()
 					})
