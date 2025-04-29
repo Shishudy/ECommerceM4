@@ -65,6 +65,24 @@ namespace WebStore.Services
 			return await _http.GetFromJsonAsync<List<ProductDTO>>("api/product") ?? new();
 		}
 
+		public async Task AddItemToCartAsync(string fk_user, int productId, int quantity)
+		{
+			var cartItem = new { ProductId = productId, Quantity = quantity };
+			var response = await _http.PostAsJsonAsync($"api/cart/{fk_user}/items", cartItem);
+			if (!response.IsSuccessStatusCode)
+			{
+				throw new Exception("Failed to add item to cart.");
+			}
+		}
+
+		public async Task RemoveItemFromCartAsync(string fk_user, int productId)
+		{
+			var response = await _http.DeleteAsync($"api/cart/{fk_user}/items/{productId}");
+			if (!response.IsSuccessStatusCode)
+			{
+				throw new Exception("Failed to remove item from cart.");
+			}
+		}
 
 		//public async Task AddProductAsync(Product product)
 		//{

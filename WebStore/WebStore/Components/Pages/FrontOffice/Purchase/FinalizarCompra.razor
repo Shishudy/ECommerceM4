@@ -163,6 +163,67 @@ else
                         @if (switchB == false && switchB == false)
                         {
                             <RadzenTabsItem Text="Billing Address">
+
+                            <RadzenStack>
+                                <RadzenRow AlignItems="AlignItems.Center">
+                                    <RadzenColumn Size="12" SizeMD="4">
+                                        <RadzenLabel Text="Name" Component="Name"/>
+                                    </RadzenColumn>
+                                    <RadzenColumn Size="12" SizeMD="8">
+                                        <RadzenTextBox Style="width: 100%;" Name="Name" />
+                                    </RadzenColumn>
+                                </RadzenRow>
+                                <RadzenRow AlignItems="AlignItems.Center">
+                                    <RadzenColumn Size="12" SizeMD="4">
+                                        <RadzenLabel Text="Country" Component="Country"/>
+                                    </RadzenColumn>
+                                    <RadzenColumn Size="12" SizeMD="8">
+                                        <RadzenDropDown @bind-Value="order.Country" Placeholder="Portugal" Data="@countries" Style="width: 100%;" TextProperty="Name" ValueProperty="Id" Name="Country">
+                                        </RadzenDropDown>
+                                    </RadzenColumn>
+                                </RadzenRow>
+                                <RadzenRow AlignItems="AlignItems.Center">
+                                    <RadzenColumn Size="12" SizeMD="4">
+                                        <RadzenLabel Text="Address Line 1" Component="Address1" />
+                                    </RadzenColumn>
+                                    <RadzenColumn Size="12" SizeMD="8">
+                                        <RadzenTextBox Style="width: 100%;" Name="Address1" />
+                                    </RadzenColumn>
+                                </RadzenRow>
+                                <RadzenRow AlignItems="AlignItems.Center">
+                                    <RadzenColumn Size="12" SizeMD="4">
+                                        <RadzenLabel Text="Address Line 2" Component="Address2"/>
+                                    </RadzenColumn>
+                                    <RadzenColumn Size="12" SizeMD="8">
+                                        <RadzenTextBox Style="width: 100%;" Name="Address2" />
+                                    </RadzenColumn>
+                                </RadzenRow>
+                                <RadzenRow AlignItems="AlignItems.Center">
+                                    <RadzenColumn Size="12" SizeMD="4">
+                                        <RadzenLabel Text="City" Component="City"/>
+                                    </RadzenColumn>
+                                    <RadzenColumn Size="12" SizeMD="8">
+                                        <RadzenTextBox Style="width: 100%;" Name="City" />
+                                    </RadzenColumn>
+                                </RadzenRow>
+                                <RadzenRow AlignItems="AlignItems.Center">
+                                    <RadzenColumn Size="12" SizeMD="4">
+                                        <RadzenLabel Text="Zip / Postal Code" Component="Zip" />
+                                    </RadzenColumn>
+                                    <RadzenColumn Size="12" SizeMD="8">
+                                        <RadzenTextBox Style="width: 100%;" Name="Zip" />
+                                    </RadzenColumn>
+                                </RadzenRow>
+                                <RadzenRow AlignItems="AlignItems.Center">
+                                    <RadzenColumn Size="12" SizeMD="4">
+                                        <RadzenLabel Text="State / Province / Region" Component="State"/>
+                                    </RadzenColumn>
+                                    <RadzenColumn Size="12" SizeMD="8">
+                                        <RadzenTextBox Style="width: 100%;" Name="State" />
+                                    </RadzenColumn>
+                                </RadzenRow>
+                            </RadzenStack>
+
                             </RadzenTabsItem>
                         }
                     </Tabs>

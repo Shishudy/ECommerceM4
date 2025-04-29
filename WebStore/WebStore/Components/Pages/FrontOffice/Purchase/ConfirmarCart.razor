@@ -1,10 +1,12 @@
 ﻿@inject HttpClient Http
 @inject PurchaseService PurchaseService
 @inject CartService CartService
+@inject ProductService ProductService
+
+
 
 @page "/confirmar-compra"
 @rendermode InteractiveServer
-
 
 <RadzenDataGrid Data="@orderDetails" AllowVirtualization="true" Style="height:400px"
                 AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.Or"
@@ -17,7 +19,14 @@
                 @String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", detail.Price)
             </Template>
         </RadzenDataGridColumn>
-        <RadzenDataGridColumn Property="@nameof(DTOProductInfo.Qtt)" Title="Quantity" />
+        <RadzenDataGridColumn Property="@nameof(DTOProductInfo.Qtt)" Title="Quantity">
+            <Template Context="detail">
+                <RadzenButton Icon="remove" Size="ButtonSize.Small" Click="@(async () => await DecreaseQuantity(detail))" />
+                @detail.Qtt
+                <RadzenButton Icon="add" Size="ButtonSize.Small" Click="@(async () => await IncreaseQuantity(detail))" />
+                <RadzenButton Icon="delete" Size="ButtonSize.Small" Click="@(async () => await RemoveItem(detail))" />
+            </Template>
+        </RadzenDataGridColumn>
         <RadzenDataGridColumn Property="@nameof(DTOProductInfo.Discount)" Title="Discount">
             <Template Context="detail">
                 @String.Format("{0}%", detail.Discount * 100)
@@ -27,7 +36,7 @@
 </RadzenDataGrid>
 
 @code {
-    List<DTOProductInfo>? orderDetails; // Renamed from orderDetail
+    List<DTOProductInfo>? orderDetails;
 
     protected override async Task OnInitializedAsync()
     {
@@ -38,13 +47,25 @@
             DTOProductInfo dtoProductInfo = (DTOProductInfo)product;
             dtoList.Add(dtoProductInfo);
         }
-        orderDetails = dtoList; // Updated to match the variable name
+        orderDetails = dtoList;
     }
 
-    @* protected async Task SaveOrder()
+    protected async Task IncreaseQuantity(DTOProductInfo detail)
     {
-        // Implement the logic to save the order
-        // You can use PurchaseService to save the order details
-        await PurchaseService.SaveOrderAsync(orderDetails);
-    } *@
+        detail.Qtt++;
+        await ProductService.AddItemToCartAsync("SomeUserId", detail.FkProduct, detail.Qtt);
+
+    }
+
+    protected async Task DecreaseQuantity(DTOProductInfo detail)
+    {
+        detail.Qtt--;
+        await ProductService.AddItemToCartAsync("SomeUserId", detail.FkProduct, detail.Qtt);
+    }
+
+    protected async Task RemoveItem(DTOProductInfo detail)
+    {
+        detail.Qtt = -1;        
+        await ProductService.AddItemToCartAsync("SomeUserId", detail.FkProduct, detail.Qtt);
+    }
 }
