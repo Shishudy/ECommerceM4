@@ -13,6 +13,22 @@
 {
 	<p>Resultados da pesquisa por: @SearchService.SearchTerm</p>
 }
+else
+{
+	<RadzenStack class="rz-p-0 rz-p-md-12">
+		<RadzenCarousel @ref=carousel @bind-SelectedIndex="@selectedIndex" Auto="false" AllowPaging="true"
+						Style="height: 400px;" PagerPosition="PagerPosition.Bottom" PagerOverlay="true">
+			<Items>
+				<RadzenCarouselItem>
+					<RadzenImage Path="https://cdn.printnetwork.com/production/assets/5966561450122033bd4456f8/imageLocker/blog-description/blog/sales_banners.jpg" class="rz-w-100" />
+				</RadzenCarouselItem>
+				<RadzenCarouselItem>
+					<RadzenImage Path="https://img.freepik.com/free-vector/flat-horizontal-sale-banner-template-with-photo_23-2149000923.jpg" class="rz-w-100" />
+				</RadzenCarouselItem>
+			</Items>
+		</RadzenCarousel>
+	</RadzenStack>
+}
 
 <div class="product-list-container">
 	@if (ProductList == null)
@@ -25,7 +41,7 @@
 			@foreach (var product in ProductList)
 			{
 				<RadzenCard class="product-card" @onclick="@(() => GoToProductPage(product.Ean))">
-					<RadzenImage Path="@product.MainImage.PathImg" AlternateText="@product.MainImage.Name"
+					<RadzenImage Path="https://dn721803.ca.archive.org/0/items/placeholder-image//placeholder-image.jpg" AlternateText="@product.MainImage.Name"
 								 Style="width: 100%; height: 200px; object-fit: cover; border-radius: 10px;" />
 
 					<div class="product-details">
@@ -133,6 +149,10 @@
 </style>
 
 @code {
+	RadzenCarousel carousel;
+
+	int selectedIndex;
+
 	public List<ProductDTO> ProductList;
 
 	public FilterDTO ProductFilter = new FilterDTO
